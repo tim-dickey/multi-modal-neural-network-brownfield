@@ -3,7 +3,7 @@ name: 'step-04-analyze-gaps'
 description: 'Complete Phase 1 with adaptive orchestration (agent-team, subagent, or sequential)'
 nextStepFile: './step-05-gate-decision.md'
 outputFile: '{test_artifacts}/traceability-report.md'
-tempOutputFile: '/tmp/tea-trace-coverage-matrix-{{timestamp}}.json'
+tempOutputFile: '{test_artifacts}/tmp/tea-trace-coverage-matrix-{{timestamp}}.json'
 ---
 
 # Step 4: Complete Phase 1 - Coverage Matrix Generation
@@ -307,6 +307,7 @@ const coverageMatrix = {
 
 ```javascript
 const outputPath = '{tempOutputFile}';
+fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, JSON.stringify(coverageMatrix, null, 2), 'utf8');
 
 console.log(`✅ Phase 1 Complete: Coverage matrix saved to ${outputPath}`);

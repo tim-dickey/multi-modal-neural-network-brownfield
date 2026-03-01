@@ -2,6 +2,7 @@
 name: 'step-05-gate-decision'
 description: 'Phase 2: Apply gate decision logic and generate outputs'
 outputFile: '{test_artifacts}/traceability-report.md'
+tempOutputFile: '{test_artifacts}/tmp/tea-trace-coverage-matrix-{{timestamp}}.json'
 ---
 
 # Step 5: Phase 2 - Gate Decision
@@ -41,7 +42,7 @@ outputFile: '{test_artifacts}/traceability-report.md'
 ### 1. Read Phase 1 Coverage Matrix
 
 ```javascript
-const matrixPath = '/tmp/tea-trace-coverage-matrix-{{timestamp}}.json';
+const matrixPath = '{tempOutputFile}';
 const coverageMatrix = JSON.parse(fs.readFileSync(matrixPath, 'utf8'));
 
 console.log('✅ Phase 1 coverage matrix loaded');
