@@ -231,27 +231,27 @@ NeuralMix occupies a unique position: **small enough to train locally, sophistic
 | Paper not accepted to target venue | Medium | Medium | Preprint on arXiv ensures public record regardless of venue acceptance |
 | v2 edge targets require architectural rethink | Medium | High | v1.5 stability phase allows architectural research before v2 commitment |
 
-### 8.2 Open Decisions (Require Resolution Before Development Kickoff)
+### 8.2 Decisions — Resolved 2026-02-28
 
-| Decision | Options | Recommendation | Owner |
-|----------|---------|----------------|-------|
-| License | Apache 2.0 vs MIT | Apache 2.0 (patent protection for commercial-adjacent community) | Tim_D |
-| Target publication venue | NeurIPS, ICML, ICLR, arXiv preprint | arXiv preprint first (fastest to community) + conference submission | Tim_D |
-| Wolfram Alpha tier | Free (2,000 req/day) vs Paid (10,000 req/day) | Free for v1 development; upgrade if validation tasks demand it | Tim_D |
-| v1.5 timeline trigger | Calendar-based vs milestone-based | Milestone-based (10+ contributors + paper submitted) | Tim_D |
+| Decision | Decision Made | Rationale |
+|----------|---------------|-----------|
+| ✅ License | **Apache 2.0** | Patent grant protects community from contributor patent claims; preferred for commercial-adjacent open-source |
+| ✅ Publication venue | **arXiv preprint + conference submission** | arXiv at v1 release starts citation clock immediately; NeurIPS 2026 target (deadline ~May 2026) aligns with ~Week 23 release |
+| ✅ Wolfram Alpha API tier | **Free tier** (2,000 req/day) | Sufficient for v1 experimental use with SQLite caching; upgrade only if validation sweeps saturate limit |
+| ✅ v1.5 advancement trigger | **Milestone-based** | Advances when: paper submitted + 10+ community contributors + stable training on 3+ GPU models |
 
 ---
 
 ## 9. Next Steps
 
-| Action | Owner | Timing |
-|--------|-------|--------|
-| Resolve open license decision (§8.2) | Tim_D | Before Week 1 |
-| Confirm paper venue target | Tim_D | Before Week 6 |
-| Complete PRD stakeholder sign-off | Technical Lead, ML Researcher, Systems Engineer | Before Week 1 |
-| Create architecture document | Winston (Architect, BMAD) | Week 1–2 |
-| Set up GitHub repository and Hugging Face org | Tim_D | Week 1 |
-| Create epics and stories from PRD | Bob (Scrum Master, BMAD) | Week 2 |
+| Action | Owner | Timing | Status |
+|--------|-------|--------|--------|
+| ~~Resolve open license decision (§8.2)~~ | Tim_D | Before Week 1 | ✅ Apache 2.0 |
+| ~~Confirm paper venue target~~ | Tim_D | Before Week 6 | ✅ arXiv + NeurIPS 2026 |
+| Complete PRD stakeholder sign-off | Technical Lead, ML Researcher, Systems Engineer | Before Week 1 | 🔲 Pending |
+| Create architecture document | Winston (Architect, BMAD) | Week 1–2 | 🔲 Ready to start |
+| Set up GitHub repository and Hugging Face org | Tim_D | Week 1 | 🔲 Pending |
+| Create epics and stories from PRD | Bob (Scrum Master, BMAD) | Week 2 | 🔲 Pending |
 
 ---
 

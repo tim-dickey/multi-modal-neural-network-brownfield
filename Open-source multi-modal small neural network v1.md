@@ -57,7 +57,7 @@ To create an accessible, trainable multi-modal neural network that enables indep
 - Implements double-loop learning for structural adaptation during training
 - Integrates symbolic computation via Wolfram Alpha API for ground truth verification
 - Optimized for consumer hardware through aggressive efficiency constraints
-- Fully open-source with permissive licensing (Apache 2.0 or MIT)
+- Fully open-source with permissive licensing (**Apache 2.0**)
 - Modular architecture enabling component-level experimentation
 
 ### 1.4 Competitive Landscape
@@ -568,7 +568,7 @@ wolfram:
 ```
 multi-modal-neural-net/
 ├── README.md
-├── LICENSE (Apache 2.0 or MIT)
+├── LICENSE (Apache 2.0)
 ├── requirements.txt
 ├── pyproject.toml
 ├── configs/
