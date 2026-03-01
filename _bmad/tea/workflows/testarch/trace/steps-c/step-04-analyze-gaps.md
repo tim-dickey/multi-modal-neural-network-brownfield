@@ -307,6 +307,7 @@ const coverageMatrix = {
 
 ```javascript
 const outputPath = '{tempOutputFile}';
+fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, JSON.stringify(coverageMatrix, null, 2), 'utf8');
 
 console.log(`✅ Phase 1 Complete: Coverage matrix saved to ${outputPath}`);
