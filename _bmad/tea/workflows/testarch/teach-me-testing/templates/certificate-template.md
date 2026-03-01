@@ -34,13 +34,13 @@ average_score: { { average_score } }
 
 ### Sessions Completed
 
-✅ **Session 1:** Quick Start (30 min) - Score: {{session_01_score}}
-✅ **Session 2:** Core Concepts (45 min) - Score: {{session_02_score}}
-✅ **Session 3:** Architecture & Patterns (60 min) - Score: {{session_03_score}}
-✅ **Session 4:** Test Design (60 min) - Score: {{session_04_score}}
-✅ **Session 5:** ATDD & Automate (60 min) - Score: {{session_05_score}}
-✅ **Session 6:** Quality & Trace (45 min) - Score: {{session_06_score}}
-✅ **Session 7:** Advanced Patterns (ongoing) - Score: {{session_07_score}}
+✅ **Session 1:** Quick Start - Score: {{session_01_score}}
+✅ **Session 2:** Core Concepts - Score: {{session_02_score}}
+✅ **Session 3:** Architecture & Patterns - Score: {{session_03_score}}
+✅ **Session 4:** Test Design - Score: {{session_04_score}}
+✅ **Session 5:** ATDD & Automate - Score: {{session_05_score}}
+✅ **Session 6:** Quality & Trace - Score: {{session_06_score}}
+✅ **Session 7:** Advanced Patterns - Score: {{session_07_score}}
 
 ---
 
