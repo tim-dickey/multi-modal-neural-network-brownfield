@@ -41,7 +41,7 @@ outputFile: '{test_artifacts}/traceability-report.md'
 ### 1. Read Phase 1 Coverage Matrix
 
 ```javascript
-const matrixPath = '/tmp/tea-trace-coverage-matrix-{{timestamp}}.json';
+const matrixPath = '{test_artifacts}/tmp/tea-trace-coverage-matrix-{{timestamp}}.json';
 const coverageMatrix = JSON.parse(fs.readFileSync(matrixPath, 'utf8'));
 
 console.log('✅ Phase 1 coverage matrix loaded');
