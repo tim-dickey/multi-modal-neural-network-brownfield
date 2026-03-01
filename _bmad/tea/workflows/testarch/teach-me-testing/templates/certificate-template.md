@@ -4,7 +4,6 @@ user: { { user_name } }
 role: { { role } }
 completion_date: { { completion_date } }
 started_date: { { started_date } }
-total_duration: { { total_duration } }
 average_score: { { average_score } }
 ---
 
@@ -27,7 +26,6 @@ average_score: { { average_score } }
 **Role:** {{role}}
 **Started:** {{started_date}}
 **Completed:** {{completion_date}}
-**Total Duration:** {{total_duration}}
 **Average Score:** {{average_score}}/100
 
 ---
