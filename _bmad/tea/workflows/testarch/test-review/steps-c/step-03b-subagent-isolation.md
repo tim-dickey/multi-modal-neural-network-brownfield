@@ -2,7 +2,7 @@
 name: 'step-03b-subagent-isolation'
 description: 'Subagent: Check test isolation (no shared state/dependencies)'
 subagent: true
-outputFile: '/tmp/tea-test-review-isolation-{{timestamp}}.json'
+outputFile: '{test_artifacts}/tea-test-review-isolation-{{timestamp}}.json'
 ---
 
 # Subagent 3B: Isolation Quality Check
