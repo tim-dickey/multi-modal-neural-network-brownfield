@@ -180,11 +180,11 @@ const reviewSummary = {
   top_10_recommendations: prioritizedRecommendations,
 
   subagent_execution: 'PARALLEL (4 quality dimensions)',
-  performance_gain: '~60% faster than sequential',
+  performance_gain: 'parallel execution reduces wall-clock time compared to sequential',
 };
 
 // Save for Step 4 (report generation)
-fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
+fs.writeFileSync(`{test_artifacts}/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
 ```
 
 ---
