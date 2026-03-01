@@ -26,7 +26,7 @@ lastSaved: ''
 
 - P0 scenarios: {p0_count} (Complexity: High)
 - P1 scenarios: {p1_count} (Complexity: Medium)
-- P2/P3 scenarios: {p2p3_count} (Complexity: Low)
+- P2/P3 scenarios: {p2p3_count} (Complexity: Low/Minimal)
 - **Total scenarios**: {total_count}
 
 ---
@@ -200,7 +200,7 @@ lastSaved: ''
 | P0        | {p0_count}        | High            | Complex setup, security |
 | P1        | {p1_count}        | Medium          | Standard coverage       |
 | P2        | {p2_count}        | Low             | Simple scenarios        |
-| P3        | {p3_count}        | Minimal         | Exploratory             |
+| P3        | {p3_count}        | Low             | Exploratory             |
 | **Total** | **{total_count}** | **-**           | **-**                   |
 
 ### Prerequisites
