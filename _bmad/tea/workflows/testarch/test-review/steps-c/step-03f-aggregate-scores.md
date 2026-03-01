@@ -180,10 +180,10 @@ const reviewSummary = {
   top_10_recommendations: prioritizedRecommendations,
 
   subagent_execution: 'PARALLEL (4 quality dimensions)',
-  performance_gain: '~60% faster than sequential',
+  performance_gain: 'parallel execution reduces wall-clock time compared to sequential',
 };
 
-// Save for Step 4 (report generation)
+// Save summary under {test_artifacts} for Step 4 (report generation)
 fs.writeFileSync(`{test_artifacts}/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
 ```
 
@@ -210,7 +210,7 @@ fs.writeFileSync(`{test_artifacts}/tea-test-review-summary-${timestamp}.json`, J
 - LOW:    {low_count} violations
 - TOTAL:  {total_count} violations
 
-🚀 Performance: Parallel execution ~60% faster than sequential
+🚀 Performance: Parallel execution reduces wall-clock time compared to sequential
 
 ✅ Ready for report generation (Step 4)
 ```
@@ -251,7 +251,7 @@ Proceed to Step 4 when:
 - ✅ Overall score calculated
 - ✅ Violations aggregated
 - ✅ Recommendations prioritized
-- ✅ Summary saved to temp file
+- ✅ Summary saved to {test_artifacts}
 - ✅ Output displayed to user
 - ✅ Progress saved to output document
 
