@@ -4,7 +4,6 @@ user: "{{user_name}}"
 role: "{{role}}"
 completion_date: "{{completion_date}}"
 started_date: "{{started_date}}"
-total_duration: "{{total_duration}}"
 average_score: "{{average_score}}"
 ---
 
