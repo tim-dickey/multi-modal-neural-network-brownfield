@@ -2,7 +2,7 @@
 name: 'step-03e-subagent-performance'
 description: 'Subagent: Check test performance (speed, efficiency, parallelization)'
 subagent: true
-outputFile: '/tmp/tea-test-review-performance-{{timestamp}}.json'
+outputFile: '{test_artifacts}/tea-test-review-performance-{{timestamp}}.json'
 ---
 
 # Subagent 3E: Performance Quality Check

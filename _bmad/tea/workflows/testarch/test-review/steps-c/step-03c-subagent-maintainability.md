@@ -2,7 +2,7 @@
 name: 'step-03c-subagent-maintainability'
 description: 'Subagent: Check test maintainability (readability, structure, DRY)'
 subagent: true
-outputFile: '/tmp/tea-test-review-maintainability-{{timestamp}}.json'
+outputFile: '{test_artifacts}/tea-test-review-maintainability-{{timestamp}}.json'
 ---
 
 # Subagent 3C: Maintainability Quality Check
