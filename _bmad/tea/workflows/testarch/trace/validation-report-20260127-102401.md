@@ -1,7 +1,7 @@
 ---
 validationDate: 2026-01-27
 workflowName: testarch-trace
-workflowPath: {project-root}/src/workflows/testarch/trace
+workflowPath: {project-root}/_bmad/tea/workflows/testarch/trace
 validationStatus: COMPLETE
 completionDate: 2026-01-27 10:24:01
 ---
