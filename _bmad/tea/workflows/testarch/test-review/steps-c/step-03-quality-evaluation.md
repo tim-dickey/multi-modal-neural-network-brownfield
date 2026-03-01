@@ -157,7 +157,7 @@ If probing is disabled, honor the requested mode strictly. If that mode cannot b
 **Subagent A: Determinism**
 
 - File: `./step-03a-subagent-determinism.md`
-- Output: `/tmp/tea-test-review-determinism-${timestamp}.json`
+- Output: `{test_artifacts}/tea-test-review-determinism-${timestamp}.json`
 - Execution:
   - `agent-team` or `subagent`: launch non-blocking
   - `sequential`: run blocking and wait
@@ -166,19 +166,19 @@ If probing is disabled, honor the requested mode strictly. If that mode cannot b
 **Subagent B: Isolation**
 
 - File: `./step-03b-subagent-isolation.md`
-- Output: `/tmp/tea-test-review-isolation-${timestamp}.json`
+- Output: `{test_artifacts}/tea-test-review-isolation-${timestamp}.json`
 - Status: Running... ⟳
 
 **Subagent C: Maintainability**
 
 - File: `./step-03c-subagent-maintainability.md`
-- Output: `/tmp/tea-test-review-maintainability-${timestamp}.json`
+- Output: `{test_artifacts}/tea-test-review-maintainability-${timestamp}.json`
 - Status: Running... ⟳
 
 **Subagent D: Performance**
 
 - File: `./step-03e-subagent-performance.md`
-- Output: `/tmp/tea-test-review-performance-${timestamp}.json`
+- Output: `{test_artifacts}/tea-test-review-performance-${timestamp}.json`
 - Status: Running... ⟳
 
 In `agent-team` and `subagent` modes, runtime decides worker scheduling and concurrency.
@@ -206,7 +206,7 @@ In `agent-team` and `subagent` modes, runtime decides worker scheduling and conc
 
 ```javascript
 const outputs = ['determinism', 'isolation', 'maintainability', 'performance'].map(
-  (dim) => `/tmp/tea-test-review-${dim}-${timestamp}.json`,
+  (dim) => `{test_artifacts}/tea-test-review-${dim}-${timestamp}.json`,
 );
 
 outputs.forEach((output) => {

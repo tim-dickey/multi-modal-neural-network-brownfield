@@ -46,7 +46,7 @@ const dimensions = ['determinism', 'isolation', 'maintainability', 'performance'
 const results = {};
 
 dimensions.forEach((dim) => {
-  const outputPath = `/tmp/tea-test-review-${dim}-${timestamp}.json`;
+  const outputPath = `{test_artifacts}/tea-test-review-${dim}-${timestamp}.json`;
   results[dim] = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
 });
 ```
@@ -184,7 +184,7 @@ const reviewSummary = {
 };
 
 // Save for Step 4 (report generation)
-fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
+fs.writeFileSync(`{test_artifacts}/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
 ```
 
 ---

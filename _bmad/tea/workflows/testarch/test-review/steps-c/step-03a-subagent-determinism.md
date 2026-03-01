@@ -2,7 +2,7 @@
 name: 'step-03a-subagent-determinism'
 description: 'Subagent: Check test determinism (no random/time dependencies)'
 subagent: true
-outputFile: '/tmp/tea-test-review-determinism-{{timestamp}}.json'
+outputFile: '{test_artifacts}/tea-test-review-determinism-{{timestamp}}.json'
 ---
 
 # Subagent 3A: Determinism Quality Check
@@ -126,7 +126,7 @@ const score = Math.max(0, 100 - totalPenalty);
 
 ## OUTPUT FORMAT
 
-Write JSON to temp file: `/tmp/tea-test-review-determinism-{{timestamp}}.json`
+Write JSON to temp file: `{test_artifacts}/tea-test-review-determinism-{{timestamp}}.json`
 
 ```json
 {
