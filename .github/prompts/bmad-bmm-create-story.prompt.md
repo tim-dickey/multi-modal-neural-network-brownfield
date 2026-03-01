@@ -1,5 +1,5 @@
 ---
-description: 'Validate story'
+description: 'Create story'
 agent: 'agent'
 tools: ['read', 'edit', 'search', 'execute']
 ---
