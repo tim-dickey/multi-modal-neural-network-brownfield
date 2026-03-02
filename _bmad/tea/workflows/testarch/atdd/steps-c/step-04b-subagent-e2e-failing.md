@@ -25,13 +25,12 @@ This is an **isolated subagent** running in parallel with API failing test gener
 ## MANDATORY EXECUTION RULES
 
 - 📖 Read this entire subagent file before acting
-- ✅ Generate FAILING E2E tests ONLY
-- ✅ Tests MUST fail when run (UI not implemented yet)
+- ✅ Write tests that are expected to fail when the current (not-yet-implemented) UI is exercised (i.e., they would fail when unskipped and run)
 - ✅ Output structured JSON to temp file
 - ✅ Follow knowledge fragment patterns
 - ❌ Do NOT generate API tests (that's subagent 4A)
 - ❌ Do NOT generate passing tests (this is TDD red phase)
-- ❌ Do NOT run tests (that's step 5)
+- ❌ Do NOT run or unskip these tests in this step (execution happens in step 5 / CI pipeline)
 
 ---
 
@@ -104,9 +103,9 @@ test.describe('[Story Name] E2E User Journey (ATDD)', () => {
     await page.goto('/register');
 
     // Expect registration form but will get 404 or missing elements
-    await page.fill('[name="email"]', 'newuser@example.com');
-    await page.fill('[name="password"]', 'SecurePass123!');
-    await page.click('button:has-text("Register")');
+    await page.getByLabel('Email').fill('newuser@example.com');
+    await page.getByLabel('Password').fill('SecurePass123!');
+    await page.getByRole('button', { name: 'Register' }).click();
 
     // Expect success message and redirect
     await expect(page.getByText('Registration successful!')).toBeVisible();
@@ -117,9 +116,9 @@ test.describe('[Story Name] E2E User Journey (ATDD)', () => {
     // THIS TEST WILL FAIL - UI not implemented yet
     await page.goto('/register');
 
-    await page.fill('[name="email"]', 'existing@example.com');
-    await page.fill('[name="password"]', 'SecurePass123!');
-    await page.click('button:has-text("Register")');
+    await page.getByLabel('Email').fill('existing@example.com');
+    await page.getByLabel('Password').fill('SecurePass123!');
+    await page.getByRole('button', { name: 'Register' }).click();
 
     // Expect error message
     await expect(page.getByText('Email already exists')).toBeVisible();
