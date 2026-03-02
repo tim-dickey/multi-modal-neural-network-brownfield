@@ -9,7 +9,7 @@ outputFile: '{test_artifacts}/test-review.md'
 
 ## STEP GOAL
 
-Read outputs from 4 quality subprocesses, calculate weighted overall score (0-100), and aggregate violations for report generation.
+Read outputs from 4 quality subagents, calculate weighted overall score (0-100), and aggregate violations for report generation.
 
 ---
 
@@ -17,10 +17,10 @@ Read outputs from 4 quality subprocesses, calculate weighted overall score (0-10
 
 - 📖 Read the entire step file before acting
 - ✅ Speak in `{communication_language}`
-- ✅ Read all 4 subprocess outputs
+- ✅ Read all 4 subagent outputs
 - ✅ Calculate weighted overall score
 - ✅ Aggregate violations by severity
-- ❌ Do NOT re-evaluate quality (use subprocess outputs)
+- ❌ Do NOT re-evaluate quality (use subagent outputs)
 
 ---
 
@@ -34,11 +34,11 @@ Read outputs from 4 quality subprocesses, calculate weighted overall score (0-10
 
 ## MANDATORY SEQUENCE
 
-### 1. Read All Subprocess Outputs
+### 1. Read All Subagent Outputs
 
 ```javascript
 // Use the SAME timestamp generated in Step 3 (do not regenerate).
-const timestamp = subprocessContext?.timestamp;
+const timestamp = subagentContext?.timestamp;
 if (!timestamp) {
   throw new Error('Missing timestamp from Step 3 context. Pass Step 3 timestamp into Step 3F.');
 }
@@ -46,7 +46,7 @@ const dimensions = ['determinism', 'isolation', 'maintainability', 'performance'
 const results = {};
 
 dimensions.forEach((dim) => {
-  const outputPath = `/tmp/tea-test-review-${dim}-${timestamp}.json`;
+  const outputPath = `{test_artifacts}/tea-test-review-${dim}-${timestamp}.json`;
   results[dim] = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
 });
 ```
@@ -56,7 +56,7 @@ dimensions.forEach((dim) => {
 ```javascript
 const allSucceeded = dimensions.every((dim) => results[dim].score !== undefined);
 if (!allSucceeded) {
-  throw new Error('One or more quality subprocesses failed!');
+  throw new Error('One or more quality subagents failed!');
 }
 ```
 
@@ -179,12 +179,12 @@ const reviewSummary = {
 
   top_10_recommendations: prioritizedRecommendations,
 
-  subprocess_execution: 'PARALLEL (4 quality dimensions)',
-  performance_gain: '~60% faster than sequential',
+  subagent_execution: 'PARALLEL (4 quality dimensions)',
+  performance_gain: 'parallel execution reduces wall-clock time compared to sequential',
 };
 
-// Save for Step 4 (report generation)
-fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
+// Save summary under {test_artifacts} for Step 4 (report generation)
+fs.writeFileSync(`{test_artifacts}/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
 ```
 
 ---
@@ -210,7 +210,7 @@ fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringif
 - LOW:    {low_count} violations
 - TOTAL:  {total_count} violations
 
-🚀 Performance: Parallel execution ~60% faster than sequential
+🚀 Performance: Parallel execution reduces wall-clock time compared to sequential
 
 ✅ Ready for report generation (Step 4)
 ```
@@ -247,11 +247,11 @@ fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringif
 
 Proceed to Step 4 when:
 
-- ✅ All subprocess outputs read successfully
+- ✅ All subagent outputs read successfully
 - ✅ Overall score calculated
 - ✅ Violations aggregated
 - ✅ Recommendations prioritized
-- ✅ Summary saved to temp file
+- ✅ Summary saved to {test_artifacts}
 - ✅ Output displayed to user
 - ✅ Progress saved to output document
 
@@ -263,14 +263,14 @@ Load next step: `{nextStepFile}`
 
 ### ✅ SUCCESS:
 
-- All 4 subprocess outputs read and parsed
+- All 4 subagent outputs read and parsed
 - Overall score calculated with proper weights
 - Violations aggregated correctly
 - Summary complete and saved
 
 ### ❌ FAILURE:
 
-- Failed to read one or more subprocess outputs
+- Failed to read one or more subagent outputs
 - Score calculation incorrect
 - Summary missing or incomplete
 

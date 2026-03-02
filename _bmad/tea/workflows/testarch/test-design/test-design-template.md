@@ -24,10 +24,10 @@ lastSaved: ''
 
 **Coverage Summary:**
 
-- P0 scenarios: {p0_count} ({p0_hours} hours)
-- P1 scenarios: {p1_count} ({p1_hours} hours)
-- P2/P3 scenarios: {p2p3_count} ({p2p3_hours} hours)
-- **Total effort**: {total_hours} hours (~{total_days} days)
+- P0 scenarios: {p0_count} (Complexity: High)
+- P1 scenarios: {p1_count} (Complexity: Medium)
+- P2/P3 scenarios: {p2p3_count} (Complexity: Low/Minimal)
+- **Total scenarios**: {total_count}
 
 ---
 
@@ -112,7 +112,7 @@ lastSaved: ''
 | {requirement} | E2E        | R-001     | 3          | QA    | {notes} |
 | {requirement} | API        | R-002     | 5          | QA    | {notes} |
 
-**Total P0**: {p0_count} tests, {p0_hours} hours
+**Total P0**: {p0_count} tests
 
 ### P1 (High) - Run on PR to main
 
@@ -123,7 +123,7 @@ lastSaved: ''
 | {requirement} | API        | R-003     | 4          | QA    | {notes} |
 | {requirement} | Component  | -         | 6          | DEV   | {notes} |
 
-**Total P1**: {p1_count} tests, {p1_hours} hours
+**Total P1**: {p1_count} tests
 
 ### P2 (Medium) - Run nightly/weekly
 
@@ -134,7 +134,7 @@ lastSaved: ''
 | {requirement} | API        | R-004     | 8          | QA    | {notes} |
 | {requirement} | Unit       | -         | 15         | DEV   | {notes} |
 
-**Total P2**: {p2_count} tests, {p2_hours} hours
+**Total P2**: {p2_count} tests
 
 ### P3 (Low) - Run on-demand
 
@@ -145,23 +145,23 @@ lastSaved: ''
 | {requirement} | E2E        | 2          | QA    | {notes} |
 | {requirement} | Unit       | 8          | DEV   | {notes} |
 
-**Total P3**: {p3_count} tests, {p3_hours} hours
+**Total P3**: {p3_count} tests
 
 ---
 
 ## Execution Order
 
-### Smoke Tests (<5 min)
+### Smoke Tests
 
 **Purpose**: Fast feedback, catch build-breaking issues
 
-- [ ] {scenario} (30s)
-- [ ] {scenario} (45s)
-- [ ] {scenario} (1min)
+- [ ] {scenario}
+- [ ] {scenario}
+- [ ] {scenario}
 
 **Total**: {smoke_count} scenarios
 
-### P0 Tests (<10 min)
+### P0 Tests
 
 **Purpose**: Critical path validation
 
@@ -171,7 +171,7 @@ lastSaved: ''
 
 **Total**: {p0_count} scenarios
 
-### P1 Tests (<30 min)
+### P1 Tests
 
 **Purpose**: Important feature coverage
 
@@ -180,7 +180,7 @@ lastSaved: ''
 
 **Total**: {p1_count} scenarios
 
-### P2/P3 Tests (<60 min)
+### P2/P3 Tests
 
 **Purpose**: Full regression coverage
 
@@ -195,13 +195,13 @@ lastSaved: ''
 
 ### Test Development Effort
 
-| Priority  | Count             | Hours/Test | Total Hours       | Notes                   |
-| --------- | ----------------- | ---------- | ----------------- | ----------------------- |
-| P0        | {p0_count}        | 2.0        | {p0_hours}        | Complex setup, security |
-| P1        | {p1_count}        | 1.0        | {p1_hours}        | Standard coverage       |
-| P2        | {p2_count}        | 0.5        | {p2_hours}        | Simple scenarios        |
-| P3        | {p3_count}        | 0.25       | {p3_hours}        | Exploratory             |
-| **Total** | **{total_count}** | **-**      | **{total_hours}** | **~{total_days} days**  |
+| Priority  | Count             | Complexity/Test | Notes                   |
+| --------- | ----------------- | --------------- | ----------------------- |
+| P0        | {p0_count}        | High            | Complex setup, security |
+| P1        | {p1_count}        | Medium          | Standard coverage       |
+| P2        | {p2_count}        | Low             | Simple scenarios        |
+| P3        | {p3_count}        | Low             | Exploratory             |
+| **Total** | **{total_count}** | **-**           | **-**                   |
 
 ### Prerequisites
 

@@ -276,7 +276,7 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 - **Passed**: {passed_count} ({pass_percentage}%)
 - **Failed**: {failed_count} ({fail_percentage}%)
 - **Skipped**: {skipped_count} ({skip_percentage}%)
-- **Duration**: {total_duration}
+
 
 **Priority Breakdown:**
 

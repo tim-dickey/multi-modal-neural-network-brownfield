@@ -1,11 +1,11 @@
 ---
-session_id: { { session_id } }
-session_name: { { session_name } }
-user: { { user_name } }
-role: { { role } }
-completed_date: { { completed_date } }
-score: { { score } }
-duration: { { duration } }
+session_id: {{session_id}}
+session_name: {{session_name}}
+user: {{user_name}}
+role: {{role}}
+completed_date: {{completed_date}}
+score: {{score}}
+duration: {{duration}}
 ---
 
 # {{session_name}} - Session Notes
