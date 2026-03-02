@@ -224,7 +224,7 @@ outputs.forEach((output) => {
 🚀 Performance Report:
 - Execution Mode: {resolvedMode}
 - Total Elapsed: ~mode-dependent
-- Parallel Gain: ~60-70% faster when mode is subagent/agent-team
+- Parallel Gain: reduced wall-clock time when mode is subagent/agent-team
 ```
 
 ---

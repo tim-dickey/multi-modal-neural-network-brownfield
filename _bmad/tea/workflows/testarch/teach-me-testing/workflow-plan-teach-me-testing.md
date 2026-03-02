@@ -60,7 +60,7 @@ Create an ongoing learning companion that teaches testing progressively through 
 ## Classification Decisions
 
 **Workflow Name:** teach-me-testing
-**Target Path:** {project-root}/src/workflows/testarch/teach-me-testing/
+**Target Path:** {project-root}/_bmad/tea/workflows/testarch/teach-me-testing/
 
 **4 Key Decisions:**
 
@@ -927,13 +927,13 @@ teach-me-testing/
 `{external-project-root}/_bmad-output/bmb-creations/workflows/teach-me-testing/`
 
 **Target (Production):**
-`{project-root}/src/workflows/testarch/teach-me-testing/`
+`{project-root}/_bmad/tea/workflows/testarch/teach-me-testing/`
 
 **Command:**
 
 ```bash
 cp -r {external-project-root}/_bmad-output/bmb-creations/workflows/teach-me-testing \
-      {project-root}/src/workflows/testarch/
+      {project-root}/_bmad/tea/workflows/testarch/
 ```
 
 **After deployment:**
