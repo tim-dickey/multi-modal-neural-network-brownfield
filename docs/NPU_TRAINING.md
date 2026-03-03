@@ -1,6 +1,23 @@
-# NPU Training Guide
+# NPU Inference Guide
 
-This guide covers how to use Neural Processing Units (NPUs) with the multi-modal neural network project.
+This guide covers how to use Neural Processing Units (NPUs) with **NeuralMix** for inference and edge deployment.
+
+**NPUs are for inference, not training.** NeuralMix v1 trains on GPU (RTX 3060 12GB target). After training, export the model to ONNX and run inference on NPUs via ONNX Runtime.
+
+**v2 roadmap:** NeuralMix v2 targets ARM Cortex-M, NVIDIA Jetson, and Raspberry Pi 5 class hardware with 10M/50M/100M parameter tiers and full online adaptation at the device level. See [docs/ROADMAP.md](ROADMAP.md) for the edge IoT roadmap.
+
+## NeuralMix + NPU Workflow
+
+```mermaid
+flowchart LR
+    TRAIN["Train on GPU\nRTX 3060 12GB"] --> CKPT["Checkpoint\n(.pt / .safetensors)"]
+    CKPT --> ONNX["Export to ONNX\ntorch.onnx.export"]
+    ONNX --> INT8["Quantize to INT8\n(v1.5 roadmap)"]
+    INT8 --> NPU["Deploy on NPU\nONNX Runtime"]
+    NPU --> DEVICES["Coral Edge TPU\nIntel AI Boost\nAMD Ryzen AI\nHailo-8"]
+```
+
+**v1 status:** ONNX export is supported via `torch.onnx.export`. INT8 quantization is planned for v1.5. The `inference.py` entry point loads a checkpoint and runs a forward pass; production NPU serving is a v1.5+ feature.
 
 ## Table of Contents
 - [What is an NPU?](#what-is-an-npu)
@@ -576,6 +593,21 @@ outputs = session.run(None, {'input': input_data})
 print(f"Output shape: {outputs[0].shape}")
 ```
 
+## NeuralMix v2 Edge Targets
+
+NeuralMix v2 (roadmap) is designed for the deployment environment that inspired the project: edge IoT devices where you cannot retrain in the cloud every time hardware capabilities shift.
+
+| Target Platform | Parameter Tier | Connection | Use Case |
+|----------------|---------------|------------|----------|
+| NVIDIA Jetson Nano | 100M | Onboard | Edge inference with online adaptation |
+| Raspberry Pi 5 | 50M | USB / PCIe | Low-power IoT sensor fusion |
+| Google Coral Edge TPU | 10M | USB / M.2 | Ultra-low-power inference |
+| ARM Cortex-M class | 10M | Integrated | Microcontroller deployment |
+
+v2 implements the full double-loop online adaptation loop: the meta-controller runs on-device to adapt to distribution shift (sensor drift, environmental changes) without cloud retraining. This is the architectural promise that motivated NeuralMix from day one.
+
+See [docs/ROADMAP.md](ROADMAP.md) for v2 advancement criteria.
+
 ## Summary
 
-NPUs provide power-efficient inference for AI models. While PyTorch training support is limited, NPUs excel at deployment scenarios via ONNX Runtime. For development and training, continue using GPUs or CPUs, then export to NPU-optimized ONNX models for production deployment.
+NPUs provide power-efficient inference for AI models. NeuralMix v1 trains on GPU and exports to ONNX for NPU inference. v1.5 adds INT8 quantization and a validated ONNX export pipeline. v2 targets edge IoT hardware natively with 10M–100M parameter tiers and on-device meta-learning adaptation.
