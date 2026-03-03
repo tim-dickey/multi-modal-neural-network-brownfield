@@ -58,10 +58,10 @@ The project now includes automatic GPU detection and configuration. The system w
 | BF16 AMP (`autocast` + `GradScaler`) | `training.mixed_precision: bf16` | ⚠️ Configured, not yet applied in `train_epoch()` |
 | Gradient checkpointing | `training.gradient_checkpointing: true` | ⚠️ Flag exists, `torch.utils.checkpoint` not applied |
 | Flash Attention 2 | Planned replacement of `q @ k.T` | ❌ Not yet implemented |
-| Gradient accumulation | `training.gradient_accumulation: 8` | ✅ Configured and applied |
-| Micro-batch size | `training.micro_batch_size: 4` | ✅ Configured and applied |
+| Gradient accumulation | `training.gradient_accumulation: 8` | ⚠️ Config flag present, not yet applied; optimizer steps every batch in `Trainer.train_epoch()` (effective batch size = `data.batch_size`) |
+| Micro-batch size | `training.micro_batch_size: 4` | ⚠️ Config flag present, not yet applied; `training.micro_batch_size` currently ignored (effective batch size = `data.batch_size`) |
 
-All three missing items are Epic 1 blockers. Do not attempt a full training run on an RTX 3060 12GB until Epic 1 is complete.
+All items marked ⚠️ or ❌ are Epic 1 blockers. Do not attempt a full training run on an RTX 3060 12GB until Epic 1 is complete.
 
 ## Quick Start
 

@@ -124,7 +124,7 @@ Input: input_ids (B, seq_len), attention_mask (B, seq_len), token_type_ids (B, s
 
 - BERT vocabulary size (30522) for compatibility with `bert-base-uncased` tokenizer
 - Segment embeddings (token_type_ids) for sentence-pair tasks
-- `SimpleTokenizer` (character-level) is a **research placeholder** — must be replaced with `AutoTokenizer.from_pretrained("bert-base-uncased")` before any accuracy benchmarking (Epic 1, Story 1.4)
+- Tokenization in the training pipeline uses `AutoTokenizer.from_pretrained("bert-base-uncased")` when available; `SimpleTokenizer` (character-level) is a **research/demo placeholder** and must not be used for accuracy benchmarking (Epic 1, Story 1.4: consolidate/remove placeholder usages)
 
 ---
 

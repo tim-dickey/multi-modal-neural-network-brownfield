@@ -69,7 +69,7 @@ NeuralMix is a **250M parameter multimodal neural network** (vision + text) that
 1. **Trains end-to-end on a single consumer GPU** (RTX 3060 12GB / RX 6700 XT 12GB) without cloud infrastructure
 2. **Incorporates double-loop meta-learning** as a first-class architectural feature — the primary research contribution
 3. **Uses an Early Fusion (Type-C) architecture** — shared transformer encoder for both modalities
-4. **Is fully open-source** under Apache 2.0 with reproducible training via Docker
+4. **Is fully open-source** under Apache 2.0; Docker-based reproducible training planned for v1.5
 
 ### What NeuralMix Is NOT (v1)
 
@@ -85,7 +85,7 @@ NeuralMix is a **250M parameter multimodal neural network** (vision + text) that
 
 ### Primary: Independent AI Developer / Edge AI Practitioner
 
-- Owns a consumer GPU (RTX 3060, 3070 Ti, 4060 Ti 16GB, RX 6700 XT — 12GB VRAM class)
+- Owns a consumer GPU (RTX 3060 12GB, 3070 Ti 8GB, 4060 Ti 16GB, RX 6700 XT 12GB — 8–16GB VRAM class)
 - Interest in multimodal AI, edge deployment, or research-grade experimentation
 - No institutional cloud budget
 - Motivated by building and understanding, not just using pre-trained black boxes
@@ -238,7 +238,7 @@ All FRs extracted from PRD v1.0 and reconciled against architecture and codebase
 
 **FR20:** The system shall release pre-trained checkpoints (100M and 250M parameter variants) on Hugging Face Model Hub with model cards including: architecture summary, training hardware, benchmark results table, known limitations, and a runnable code snippet. INT8 quantized 250M checkpoint (≤4GB VRAM inference) is a stretch target.
 
-**FR21:** The repository shall include a `Dockerfile` using NVIDIA NGC PyTorch base image (`nvcr.io/nvidia/pytorch:24.01-py3`) and a `docker-compose.yml` for one-command training environment setup.
+**FR21 (v1.5+):** The repository shall include a `Dockerfile` using NVIDIA NGC PyTorch base image (`nvcr.io/nvidia/pytorch:24.01-py3`) and a `docker-compose.yml` for one-command training environment setup. This is a post-v1 requirement and is not required for the v1.0 release.
 
 ### 5.7 Developer Experience
 
