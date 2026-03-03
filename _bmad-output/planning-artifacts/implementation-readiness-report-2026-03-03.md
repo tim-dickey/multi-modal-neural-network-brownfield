@@ -35,7 +35,7 @@ sourceDocuments:
 | Architecture Doc | `_bmad-output/implementation-artifacts/architecture-2026-03-03.md` | ✅ Found |
 | Codebase Review | `_bmad-output/implementation-artifacts/codebase-review-2026-03-03.md` | ✅ Found |
 | UX Assessment | `_bmad-output/implementation-artifacts/ux-assessment-2026-03-03.md` | ✅ Found |
-| **Epics & Stories** | `_bmad-output/planning-artifacts/epics.md` | ✅ Found |
+| **Epics & Stories** | `_bmad-output/planning-artifacts/epics.md` | ✅ Found (added post-assessment in this PR) |
 
 **No duplicate conflicts detected.**
 
@@ -181,7 +181,7 @@ The PRD (v1.0, November 23, 2025) does not use formal FR1/FR2 numbering. Require
 
 ## Epic Coverage Validation
 
-### Status (at time of assessment): ❌ EPICS & STORIES DOCUMENT DOES NOT EXIST
+### Status (at time of assessment): ❌ EPICS & STORIES DOCUMENT DID NOT EXIST *(see Important disclaimer below)*
 
 At the time this assessment snapshot was generated, no epics and stories document was found anywhere in the repository. FR coverage mapping against epics could not be performed.
 
@@ -226,7 +226,9 @@ Since epics did not yet exist at the time of assessment, I am assessing coverage
 - **Structurally present, functionally incomplete:** 8 (FR2, FR4, FR5, FR6, FR7, FR8, FR9, FR14)
 - **Not implemented / not started:** 10 (FR10, FR12, FR15, FR16, FR17, FR18, FR20, FR21, FR22, FR23)
 - **Codebase implementation coverage (functional):** ~22% of FRs fully satisfied
-- **Epics & stories coverage (at assessment time):** **0% — document did not exist at time of assessment; see `epics.md` added in this PR**
+- **Epics & stories coverage (at assessment time):** **0% — requirements document did not exist at time of assessment**
+
+> _Note: An `epics.md` document is introduced in this PR; coverage against it will be tracked in subsequent assessments._
 
 ### Missing FR Coverage (Critical)
 
@@ -362,7 +364,7 @@ The project has strong strategic clarity, a sound architecture, and a solid code
 
 ### Critical Issues Requiring Immediate Action
 
-#### 🔴 BLOCKER 1 — Epics & Stories Not Created (resolved in this PR)
+#### ✅ RESOLVED — Blocker 1: Epics & Stories Not Created (fixed in this PR)
 - **Status:** Resolved by adding `_bmad-output/planning-artifacts/epics.md` in this PR.
 - **Impact (at assessment time):** Highest. Implementation planning could not begin without sprint-level work items.
 - **Follow-up action:** Keep the new epics and stories document in sync with the architecture and PRD as the design evolves; update or extend epics as new constraints or insights emerge.
