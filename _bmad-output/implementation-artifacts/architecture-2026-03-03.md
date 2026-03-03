@@ -103,7 +103,7 @@ Input: (B, 3, 224, 224)
 - Truncated-normal initialization (std=0.02) — standard ViT init
 
 **Outstanding work:**
-- Replace standard `q @ k.T` attention with **Flash Attention 2** (`torch.nn.functional.scaled_dot_product_attention` with `is_causal=False`) — required for 11.5GB VRAM target
+- Replace standard `q @ k.T` attention with PyTorch scaled dot-product attention (`torch.nn.functional.scaled_dot_product_attention` with `is_causal=False`), configured to use the Flash backend when available (CUDA device, supported dtypes/shapes), to help meet the 11.5GB VRAM target
 - Implement `get_attention_maps()` for interpretability figures
 
 ---
@@ -444,7 +444,7 @@ Memory optimizations required:
 **Rationale:**
 - Over-weighting Wolfram signal risks teaching the model to optimise for Wolfram queries rather than multimodal understanding
 - 15% is sufficient to provide a measurable accuracy lift on factual/mathematical tasks
-- SQLite caching (30-day TTL) makes API unavailability a minor issue during long training runs
+- SQLite caching with a 30-day TTL is planned as a future enhancement to reduce API dependency; the current implementation only uses an in-memory daily counter
 
 ---
 

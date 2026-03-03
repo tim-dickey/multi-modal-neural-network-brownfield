@@ -14,7 +14,7 @@ The codebase represents a **solid Phase 1–5 implementation** of the NeuralMix 
 
 Key findings:
 - ✅ Model architecture matches PRD specification completely
-- ✅ Training infrastructure is production-quality with correct AMP, gradient clipping, checkpoint management
+- ✅ Training infrastructure is production-quality with AMP support configured (but not yet applied in `train_epoch()`/`train_step()`), plus gradient clipping and checkpoint management
 - ⚠️ Double-loop controller is structurally wired but **not functionally applied** during training — `train_epoch()` never passes `current_loss`, `current_accuracy`, or `gradient_norm` to the model forward pass
 - ⚠️ Wolfram Alpha integration exists but is **not connected to the training loop** — no validation loss injection
 - ⚠️ `evaluation/` module is **empty** — benchmarking (VQA, CIFAR-100, ablation studies) not yet implemented
@@ -244,7 +244,7 @@ The `__init__.py` is empty. No benchmark implementations exist. Per PRD Phase 7,
 
 #### `train.py` — Minimal launcher
 ```python
-# Only 20 lines — calls Trainer(config_path=...).train()
+# Thin entrypoint that calls Trainer(config_path=...).train()
 ```
 Correct. No issues.
 
@@ -255,9 +255,9 @@ Loads checkpoint, runs forward pass. No batching, no beam search, no production 
 
 ### Test Suite — ✅ Comprehensive
 
-20 test files covering all major modules. Notable:
-- `test_integration.py` (53KB) — end-to-end training loop tests
-- `test_trainer_unit.py` (44KB) — unit tests for trainer components
+Test files cover all major modules. Notable components include:
+- `test_integration.py` — end-to-end training loop tests
+- `test_trainer_unit.py` — unit tests for trainer components
 - `test_gpu_utils.py` / `test_npu_utils.py` — hardware detection tests
 - `conftest.py` + `mock_utils.py` — well-structured fixtures and mocks
 
