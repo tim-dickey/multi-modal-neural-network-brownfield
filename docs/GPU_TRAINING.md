@@ -1,6 +1,12 @@
 # GPU Training Configuration Guide
 
-This guide explains how to configure GPU training for the Multi-Modal Neural Network project.
+This guide covers GPU configuration for **NeuralMix** — a 250M parameter multimodal model designed to train on a single consumer GPU with 12GB VRAM.
+
+**Primary target hardware:** NVIDIA RTX 3060 12GB (or AMD RX 6700 XT 12GB equivalent)
+
+**VRAM budget:** Peak ~10–11GB with all memory optimizations active (BF16 AMP + Flash Attention 2 + gradient checkpointing). Without these optimizations, the model exceeds 11.5GB and will OOM on the RTX 3060. See [Implementation Status](#implementation-status) below.
+
+> **Note:** BF16 AMP and Flash Attention 2 are configured in `configs/default.yaml` but not yet applied in the training loop (Epic 1 work in progress). Until Epic 1 is complete, full-precision training is the default and will exceed the 12GB VRAM target on the RTX 3060.
 
 ## Device Selection Flow
 
@@ -44,6 +50,18 @@ The project now includes automatic GPU detection and configuration. The system w
 1. **Automatically detect** available GPUs
 2. **Select the best device** (GPU if available, otherwise CPU)
 3. **Configure optimal settings** based on your hardware
+
+## Implementation Status
+
+| Memory Optimization | Config Location | Training Loop Status |
+|--------------------|-----------------|---------------------|
+| BF16 AMP (`autocast` + `GradScaler`) | `training.mixed_precision: bf16` | ⚠️ Configured, not yet applied in `train_epoch()` |
+| Gradient checkpointing | `training.gradient_checkpointing: true` | ⚠️ Flag exists, `torch.utils.checkpoint` not applied |
+| Flash Attention 2 | Planned replacement of `q @ k.T` | ❌ Not yet implemented |
+| Gradient accumulation | `training.gradient_accumulation: 8` | ⚠️ Config flag present, not yet applied; optimizer steps every batch in `Trainer.train_epoch()` (effective batch size = `data.batch_size`) |
+| Micro-batch size | `training.micro_batch_size: 4` | ⚠️ Config flag present, not yet applied; `training.micro_batch_size` currently ignored (effective batch size = `data.batch_size`) |
+
+All items marked ⚠️ or ❌ are Epic 1 blockers. Do not attempt a full training run on an RTX 3060 12GB until Epic 1 is complete.
 
 ## Quick Start
 
@@ -293,28 +311,66 @@ elif support['fp16']:
 
 ## Recommended Configurations by GPU
 
-### NVIDIA RTX 3090 / 4090 (24GB)
+### NVIDIA RTX 3060 12GB (Primary Target)
+
+This is the minimum target hardware for NeuralMix. Requires all Epic 1 memory optimizations to be active.
+
+```yaml
+hardware:
+  device: "auto"
+  max_memory: "11GB"
+training:
+  mixed_precision: "bf16"
+  gradient_checkpointing: true
+  micro_batch_size: 4
+  gradient_accumulation: 8
+data:
+  pin_memory: true
+  num_workers: 4
+```
+
+### NVIDIA RTX 3070 / 4060 Ti 16GB
+
 ```yaml
 hardware:
   device: "auto"
 training:
   mixed_precision: "bf16"
+  gradient_checkpointing: true
+  micro_batch_size: 6
+  gradient_accumulation: 6
+data:
+  pin_memory: true
+  num_workers: 4
+```
+
+### NVIDIA RTX 3090 / 4090 (24GB)
+
+```yaml
+hardware:
+  device: "auto"
+training:
+  mixed_precision: "bf16"
+  micro_batch_size: 16
+  gradient_accumulation: 2
 data:
   batch_size: 32
 ```
 
 ### NVIDIA RTX 3080 / 4080 (10-16GB)
+
 ```yaml
 hardware:
   device: "auto"
 training:
-  mixed_precision: "fp16"
+  mixed_precision: "bf16"
   gradient_checkpointing: true
 data:
   batch_size: 16
 ```
 
 ### NVIDIA GTX 1080 Ti (11GB)
+
 ```yaml
 hardware:
   device: "auto"
@@ -326,6 +382,7 @@ data:
 ```
 
 ### CPU Only
+
 ```yaml
 hardware:
   device: "cpu"
