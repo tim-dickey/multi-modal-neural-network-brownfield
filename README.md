@@ -8,11 +8,11 @@
 
 > *"The first open-source multimodal model you can actually train at home — 250M parameters, consumer GPU ready, with built-in meta-learning. No cloud account required."*
 
-NeuralMix is a **250M parameter multimodal neural network** (vision + text) that you can train end-to-end on a single consumer GPU with 12GB VRAM. It is the only open-source multimodal model at any parameter scale that implements **double-loop meta-learning** as a first-class architectural feature integrated into the training pipeline.
+NeuralMix is a **250M parameter multimodal neural network** (vision + text) that you can train end-to-end on a single consumer GPU with 12GB VRAM. It is the only open-source multimodal model at any parameter scale that is architected around **double-loop meta-learning** as a first-class feature, structurally implemented in the codebase (with training-loop wiring scheduled for Epic 2).
 
 **Who is this for?**
 
-- Independent AI developers with an RTX 3060/3070/4060 Ti (12GB VRAM class) who want to train a real multimodal model without a cloud bill
+- Independent AI developers with a 12GB+ consumer GPU (e.g., RTX 3060 12GB, RTX 4070, or 4060 Ti 16GB) who want to train a real multimodal model without a cloud bill
 - Academic researchers studying meta-learning, multimodal fusion, or edge AI
 - Graduate students who need a reproducible, trainable reference architecture
 - Edge IoT practitioners building deploy-at-the-edge pipelines

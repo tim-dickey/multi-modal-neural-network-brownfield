@@ -64,7 +64,7 @@ NeuralMix follows a deliberate three-stage progression aligned to the edge IoT d
 
 ### v1 Success Criteria
 
-- Academic preprint accepted on arXiv or 50+ citations/views within 12 months
+- Academic preprint posted to arXiv as a preprint or 50+ citations/views within 12 months
 - 5+ independent result reproductions within 6 months
 - Double-loop ablation validated: ≥5% accuracy improvement documented
 - 100+ GitHub stars in 90 days post-release
