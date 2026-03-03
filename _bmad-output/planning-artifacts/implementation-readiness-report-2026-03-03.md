@@ -35,7 +35,7 @@ sourceDocuments:
 | Architecture Doc | `_bmad-output/implementation-artifacts/architecture-2026-03-03.md` | ✅ Found |
 | Codebase Review | `_bmad-output/implementation-artifacts/codebase-review-2026-03-03.md` | ✅ Found |
 | UX Assessment | `_bmad-output/implementation-artifacts/ux-assessment-2026-03-03.md` | ✅ Found |
-| **Epics & Stories** | **Not found — zero results across entire repository** | ❌ MISSING |
+| **Epics & Stories** | `_bmad-output/planning-artifacts/epics.md` | ✅ Found (added post-assessment in this PR) |
 
 **No duplicate conflicts detected.**
 
@@ -181,15 +181,17 @@ The PRD (v1.0, November 23, 2025) does not use formal FR1/FR2 numbering. Require
 
 ## Epic Coverage Validation
 
-### Status: ❌ EPICS & STORIES DOCUMENT DOES NOT EXIST
+### Status (at time of assessment): ❌ EPICS & STORIES DOCUMENT DID NOT EXIST *(see Important disclaimer below)*
 
-No epics and stories document was found anywhere in the repository. FR coverage mapping against epics cannot be performed.
+At the time this assessment snapshot was generated, no epics and stories document was found anywhere in the repository. FR coverage mapping against epics could not be performed.
 
-**Root cause:** Per `next-steps-analysis-2026-03-02.md`, epics/stories creation (Bob, BMAD SM) was explicitly blocked pending the architecture document. Winston's architecture document was completed 2026-03-03 — the same date as this assessment. **The blocker has been resolved but the work has not yet been done.**
+**Root cause:** Per `next-steps-analysis-2026-03-02.md`, epics/stories creation (Bob, BMAD SM) was explicitly blocked pending the architecture document. Winston's architecture document was completed 2026-03-03 — the same date as this assessment. **The blocker had been resolved but the work had not yet been done at the time of this report.**
 
-### FR Coverage Matrix (against codebase — substitute for missing epics)
+**Important disclaimer (snapshot vs. current state):** This implementation readiness report was generated *before* the `epics.md` document introduced in this PR. The statements above about epics "not existing" describe the repository state **prior to this PR**. For an up‑to‑date view, FR→epic coverage **must be re‑run against `epics.md`**, and this section should be treated as a historical snapshot only.
 
-Since no epics exist, I am assessing coverage against the codebase review and architecture document as the best available proxy for implementation status.
+### FR Coverage Matrix (against codebase — substitute for missing epics at that time)
+
+Since epics did not yet exist at the time of assessment, I am assessing coverage against the codebase review and architecture document as the best available proxy for implementation status.
 
 | FR# | Requirement Summary | Codebase Status | Gap |
 |-----|---------------------|-----------------|-----|
@@ -220,11 +222,13 @@ Since no epics exist, I am assessing coverage against the codebase review and ar
 ### Coverage Statistics
 
 - **Total PRD FRs:** 23
-- **Fully implemented:** 6 (FR1, FR3, FR11, FR13 partial, FR19, FR11)
+- **Fully implemented:** 5 (FR1, FR3, FR11, FR13, FR19)
 - **Structurally present, functionally incomplete:** 8 (FR2, FR4, FR5, FR6, FR7, FR8, FR9, FR14)
-- **Not implemented / not started:** 9 (FR10, FR12, FR15, FR16, FR17, FR18, FR20, FR21, FR22, FR23)
-- **Codebase implementation coverage (functional):** ~26% of FRs fully satisfied
-- **Epics & stories coverage:** **0% — document does not exist**
+- **Not implemented / not started:** 10 (FR10, FR12, FR15, FR16, FR17, FR18, FR20, FR21, FR22, FR23)
+- **Codebase implementation coverage (functional):** ~22% of FRs fully satisfied
+- **Epics & stories coverage (at assessment time):** **0% — requirements document did not exist at time of assessment**
+
+> _Note: An `epics.md` document is introduced in this PR; coverage against it will be tracked in subsequent assessments._
 
 ### Missing FR Coverage (Critical)
 
@@ -347,21 +351,23 @@ The PRD defines 9 phases. Phases 1–5 are complete per the codebase review. Epi
 
 ### Overall Readiness Status
 
-# 🔴 NOT READY — 2 Critical Blockers
+# 🔴 NOT READY — 2 Critical Blockers (at assessment time; 1 resolved in this PR)
 
-The project has strong strategic clarity, a sound architecture, and a solid codebase foundation. However, two conditions block implementation readiness:
+The project has strong strategic clarity, a sound architecture, and a solid codebase foundation. However, at assessment time two conditions blocked implementation readiness:
 
-1. **No epics and stories document exists** — development team (solo: Tim_D) has no actionable sprint-level work items
+> Note: This report reflects the state **before** the epics and stories document was created. This PR adds `_bmad-output/planning-artifacts/epics.md`, which resolves Blocker 1 below; Blocker 2 remains open.
+
+1. **Epics and stories document was missing at assessment time (resolved in this PR)** — development team (solo: Tim_D) had no actionable sprint-level work items
 2. **Three Phase 6 blockers are unresolved** — the training run cannot produce valid results without AMP, double-loop wiring, and the tokenizer fix
 
 ---
 
 ### Critical Issues Requiring Immediate Action
 
-#### 🔴 BLOCKER 1 — Epics & Stories Not Created
-- **Impact:** Highest. Cannot begin structured implementation without sprint-level work items.
-- **Action:** Run `/bmad-bmm-create-story` or `[CE] Create Epics and Stories` workflow immediately. The architecture doc (Winston, 2026-03-03) has been approved — the only prerequisite is now satisfied.
-- **Scope:** Epics must cover Phases 6–9 only (Phases 1–5 complete). Must be framed as brownfield integration work, not greenfield builds.
+#### ✅ RESOLVED — Blocker 1: Epics & Stories Not Created (fixed in this PR)
+- **Status:** Resolved by adding `_bmad-output/planning-artifacts/epics.md` in this PR.
+- **Impact (at assessment time):** Highest. Implementation planning could not begin without sprint-level work items.
+- **Follow-up action:** Keep the new epics and stories document in sync with the architecture and PRD as the design evolves; update or extend epics as new constraints or insights emerge.
 
 #### 🔴 BLOCKER 2 — Phase 6 Training Run Preconditions Unmet
 Three functional gaps will cause the training run to produce invalid or no results:
@@ -370,7 +376,7 @@ Three functional gaps will cause the training run to produce invalid or no resul
 |-----|------|-------------|
 | AMP (`autocast` + `GradScaler`) not applied | `src/training/trainer.py` | Wrap forward pass in `torch.amp.autocast`; wrap backward with `scaler` |
 | Double-loop not wired | `src/training/trainer.py` | Pass `prev_loss`, `prev_acc`, `prev_grad_norm` to model forward; call `adaptive_lr.update_lr()` |
-| `SimpleTokenizer` placeholder | `src/models/text_encoder.py` | Replace with `AutoTokenizer.from_pretrained("bert-base-uncased")` |
+| `SimpleTokenizer` placeholder / fallback tokenizer path | `src/data/dataset.py` (fallback), `src/models/text_encoder.py` (unused stub) | Verify and harden the character-level fallback tokenization in `src/data/dataset.py`; remove or clearly document the unused `SimpleTokenizer` stub in `src/models/text_encoder.py`. |
 
 These three fixes are **pre-requisites to the training run** — not post-run polish items.
 
@@ -382,10 +388,10 @@ These three fixes are **pre-requisites to the training run** — not post-run po
 - Architecture §3.3 memory budget shows peak VRAM at 10–11GB **with** Flash Attention. Without it, the 250M model on 196+512 sequence length will exceed 11.5GB.
 - Fix: Replace `q @ k.T` in `MultiHeadAttention` and `TextMultiHeadAttention` with `F.scaled_dot_product_attention(q, k, v)` — PyTorch 2.0+ natively dispatches to Flash Attention backend on supported hardware.
 
-#### 🟠 H2 — Wolfram Alpha Not Wired to Training Loss (FR6)
+#### 🟠 H2 — Wolfram Alpha Not Wired to Training Loss (FR6) — **Deferred to v1.5**
 - Wolfram auxiliary loss (15% weight) is specified in the PRD and architecture but is entirely disconnected from the training loop.
-- Fix: Instantiate `WolframKnowledgeInjector` in `Trainer.__init__()` (gated on `wolfram.api_key` env var presence); add validation loss to `total_loss` in `train_step()`.
-- Note: Per PM assessment, consider whether Wolfram wiring is truly needed for v1 paper submission or whether it can slide to v1.5. The core research claim is double-loop, not Wolfram.
+- **Scope decision (Tim_D):** Wolfram Alpha wiring is out of scope for v1. The core v1 research claim is double-loop meta-learning, not Wolfram knowledge injection. Wolfram is tracked in the v1.5 roadmap.
+- **v1 action:** No wiring required. Ensure the integration compiles and the graceful-fallback path is tested. Document Wolfram as a v1.5 roadmap item in release notes.
 
 #### 🟠 H3 — Evaluation Module Empty (FR15)
 - `src/evaluation/` is empty. No benchmark results can be produced. Paper cannot be written.
