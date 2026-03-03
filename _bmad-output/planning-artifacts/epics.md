@@ -16,7 +16,7 @@ inputDocuments:
 This document provides the complete epic and story breakdown for NeuralMix, decomposing the requirements from the PRD, UX Design, and Architecture into implementable stories.
 
 **IMPORTANT CONTEXT — Brownfield Project:**
-This is a brownfield project. The codebase is already at Phase 5 complete (Phases 1–5 of the 9-phase PRD plan are implemented). Epics in this document cover **Phases 6–9 only** — completing the functional wiring gaps, executing the training run, building the evaluation framework, producing documentation/UX, and releasing publicly. No epic re-implements work that already exists.
+This is a brownfield project. The codebase is partially through Phase 5 (Phases 1–4 of the 9-phase PRD plan are implemented and Phase 5 is partially configured). Epics in this document cover the remaining Phase 5 work and **Phases 6–9** — completing the functional wiring gaps, executing the training run, building the evaluation framework, producing documentation/UX, and releasing publicly. No epic re-implements work that already exists.
 
 **Existing codebase foundation (do not re-implement):**
 - `src/models/` — VisionEncoder (ViT-S), TextEncoder (BERT-Small), FusionLayer (early fusion), DoubleLoopController (LSTM), task Heads — all structurally complete
