@@ -25,13 +25,12 @@ This is an **isolated subagent** running in parallel with E2E failing test gener
 ## MANDATORY EXECUTION RULES
 
 - 📖 Read this entire subagent file before acting
-- ✅ Generate FAILING API tests ONLY
-- ✅ Tests MUST fail when run (feature not implemented yet)
+- ✅ Tests MUST be written so they are expected to fail when unskipped and run against the current implementation (feature not implemented yet; they may be committed as skipped to keep CI green)
 - ✅ Output structured JSON to temp file
 - ✅ Follow knowledge fragment patterns
 - ❌ Do NOT generate E2E tests (that's subagent 4B)
 - ❌ Do NOT generate passing tests (this is TDD red phase)
-- ❌ Do NOT run tests (that's step 5)
+- ❌ Do NOT run tests in this subagent step (that's step 5)
 
 ---
 
