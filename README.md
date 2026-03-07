@@ -10,6 +10,30 @@
 
 NeuralMix is a **250M parameter multimodal neural network** (vision + text) that you can train end-to-end on a single consumer GPU with 12GB VRAM. It is the only open-source multimodal model at any parameter scale that is architected around **double-loop meta-learning** as a first-class feature, structurally implemented in the codebase (with training-loop wiring scheduled for Epic 2).
 
+**Why This Project Exists: TPS for AI in Brownfield Systems**
+This project is inspired by the Toyota Production System (TPS) and The Flow System, not by a quest to chase the “biggest” or “flashiest” model.
+
+***TPS is a production philosophy built on two pillars:***
+
+- Jidoka – automation with a human touch, stopping when abnormalities occur so defects don’t flow downstream.
+- Just‑in‑Time – making only what is needed, when it is needed, and in the amount needed.
+
+***Applied to AI in brownfield software, that leads to a few design choices:***
+
+We focus on eliminating waste in the software lifecycle: rework, handoffs, hunting for information, context switching, and over‑engineering AI solutions nobody uses.
+We aim for automation with a human touch: agents and multimodal models monitor and assist, but humans decide when to stop the line, investigate anomalies, and change the system.
+We prefer Just‑in‑Time intelligence over giant one‑shot generations: the system produces the smallest helpful artifact (a test, a refactor suggestion, a diagram, a summary) at the moment of need.
+
+The Flow System extends this with a focus on complexity thinking, distributed leadership, and teams‑of‑teams. 
+
+***This repo embraces that by:***
+
+- Treating a brownfield codebase as a complex adaptive system, where code, docs, logs, and human conversations co‑evolve.
+- Enabling different roles (dev, SRE, PO, architect) to own and shape their slice of the AI stack, rather than centralizing all “intelligence” in one place.
+- Designing for modular adoption so multiple teams can move at their own pace while still sharing infrastructure and learning.
+
+In short: this is an experiment in TPS‑inspired AI for real‑world, brownfield systems—using multimodal, agentic capabilities to remove waste, protect flow, and make work easier for the people doing it, not to replace them.
+
 **Who is this for?**
 
 - Independent AI developers with a 12GB+ consumer GPU (e.g., RTX 3060 12GB, RTX 4070, or 4060 Ti 16GB) who want to train a real multimodal model without a cloud bill
