@@ -10,7 +10,8 @@
 
 NeuralMix is a **250M parameter multimodal neural network** (vision + text) that you can train end-to-end on a single consumer GPU with 12GB VRAM. It is the only open-source multimodal model at any parameter scale that is architected around **double-loop meta-learning** as a first-class feature, structurally implemented in the codebase (with training-loop wiring scheduled for Epic 2).
 
-**Why This Project Exists: TPS for AI in Brownfield Systems**
+**Why This Project Exists:** TPS for AI in Brownfield Systems
+
 This project is inspired by the Toyota Production System (TPS) and The Flow System, not by a quest to chase the “biggest” or “flashiest” model.
 
 ***TPS is a production philosophy built on two pillars:***
@@ -20,9 +21,9 @@ This project is inspired by the Toyota Production System (TPS) and The Flow Syst
 
 ***Applied to AI in brownfield software, that leads to a few design choices:***
 
-We focus on eliminating waste in the software lifecycle: rework, handoffs, hunting for information, context switching, and over‑engineering AI solutions nobody uses.
-We aim for automation with a human touch: agents and multimodal models monitor and assist, but humans decide when to stop the line, investigate anomalies, and change the system.
-We prefer Just‑in‑Time intelligence over giant one‑shot generations: the system produces the smallest helpful artifact (a test, a refactor suggestion, a diagram, a summary) at the moment of need.
+- We focus on eliminating waste in the software lifecycle: rework, handoffs, hunting for information, context switching, and over‑engineering AI solutions nobody uses.
+- We aim for automation with a human touch: agents and multimodal models monitor and assist, but humans decide when to stop the line, investigate anomalies, and change the system.
+- We prefer Just‑in‑Time intelligence over giant one‑shot generations: the system produces the smallest helpful artifact (a test, a refactor suggestion, a diagram, a summary) at the moment of need.
 
 The Flow System extends this with a focus on complexity thinking, distributed leadership, and teams‑of‑teams. 
 
