@@ -11,7 +11,7 @@ existing_patterns_found: 8
 
 # Project Context for AI Agents
 
-_This file contains critical rules and patterns that AI agents must follow when implementing code in this project. Focus on unobvious details that agents might otherwise miss._
+_This file contains critical rules and patterns that AI agents must follow when implementing code in this project. Focus on non-obvious details that agents might otherwise miss._
 
 ---
 
