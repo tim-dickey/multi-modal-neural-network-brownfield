@@ -22,7 +22,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Supporting stack: `datasets>=2.14.0`, `webdataset>=0.2.0`, `numpy>=1.24.0`, `scipy>=1.11.0`, `scikit-learn>=1.5.0`, `wandb>=0.15.0`, `redis>=4.5.4`, `diskcache>=5.6.0`, `wolframalpha>=5.0.0`, `requests>=2.32.4,<3`, `httpx>=0.28.0`.
 - Prefer `safetensors>=0.4.0` and existing safe-load utilities when checkpoint format choices exist.
 - Dev toolchain typically includes: `pytest`, `pytest-cov`, `pytest-benchmark`, `pytest-asyncio`, `black`, `isort`, `flake8`, `mypy`, and `ruff`; see `pyproject.toml` and pre-commit configuration for the authoritative list of configured tools.
-- Treat `docs/ARCHITECTURE.md` as the source of truth, and preserve existing bounds unless the task is explicitly a dependency upgrade: `transformers<6`, `pyyaml<7`, `requests<3`, `huggingface-hub<2`.
+- Treat `docs/ARCHITECTURE.md` as the source of truth, and preserve existing bounds unless the task is explicitly a dependency upgrade: `transformers<6`, `pyyaml<7`, `requests<3`. For `huggingface-hub`, follow the bounds defined in `pyproject.toml` (currently `>=0.17.0` for the `huggingface` extra).
 
 ## Critical Implementation Rules
 
