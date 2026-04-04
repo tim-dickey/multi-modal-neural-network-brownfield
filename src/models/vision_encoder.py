@@ -71,17 +71,25 @@ class MultiHeadAttention(nn.Module):
         qkv = qkv.permute(2, 0, 3, 1, 4)  # (3, B, num_heads, N, head_dim)
         q, k, v = qkv[0], qkv[1], qkv[2]
 
-        # Attention
-        attn = (q @ k.transpose(-2, -1)) * (self.head_dim**-0.5)
-
+        attn_mask = None
         if mask is not None:
-            attn = attn.masked_fill(mask == 0, float("-inf"))
+            if mask.dim() == 2:
+                attn_mask = mask[:, None, None, :].bool()
+            elif mask.dim() == 3:
+                attn_mask = mask[:, None, :, :].bool()
+            else:
+                attn_mask = mask.bool()
 
-        attn = F.softmax(attn, dim=-1)
-        attn = self.dropout(attn)
+        x = F.scaled_dot_product_attention(
+            q,
+            k,
+            v,
+            attn_mask=attn_mask,
+            dropout_p=self.dropout.p if self.training else 0.0,
+        )
 
         # Combine heads
-        x = (attn @ v).transpose(1, 2).reshape(B, N, C)
+        x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
         x = self.dropout(x)
 
@@ -241,3 +249,6 @@ def create_vision_encoder(config: Dict[str, Any]) -> VisionEncoder:
         dropout=config.get("dropout", 0.1),
         use_cls_token=config.get("use_cls_token", True),
     )
+
+
+

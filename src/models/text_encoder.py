@@ -108,20 +108,21 @@ class TextMultiHeadAttention(nn.Module):
             .transpose(1, 2)
         )
 
-        # Attention scores
-        attn = (q @ k.transpose(-2, -1)) / math.sqrt(self.head_dim)
-
-        # Apply attention mask if provided
+        sdpa_mask = None
         if attention_mask is not None:
-            # Reshape mask for broadcasting: (B, 1, 1, N)
-            attention_mask = attention_mask.unsqueeze(1).unsqueeze(2)
-            attn = attn.masked_fill(attention_mask == 0, float("-inf"))
+            # Reshape for SDPA: (B, 1, 1, N) where True marks tokens that can be attended.
+            sdpa_mask = attention_mask.unsqueeze(1).unsqueeze(2).bool()
 
-        attn = F.softmax(attn, dim=-1)
-        attn = self.attn_dropout(attn)
+        x = F.scaled_dot_product_attention(
+            q,
+            k,
+            v,
+            attn_mask=sdpa_mask,
+            dropout_p=self.attn_dropout.p if self.training else 0.0,
+        )
 
         # Combine heads
-        x = (attn @ v).transpose(1, 2).reshape(B, N, C)
+        x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
         x = self.proj_dropout(x)
 
@@ -329,3 +330,7 @@ def create_text_encoder(config: Dict[str, Any]) -> TextEncoder:
         dropout=config.get("dropout", 0.1),
         use_cls_token=config.get("use_cls_token", True),
     )
+
+
+
+
