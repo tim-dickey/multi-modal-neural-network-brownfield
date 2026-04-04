@@ -3,12 +3,11 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.8+-red.svg)](https://pytorch.org/)
-[![Tests](https://img.shields.io/badge/tests-483%20passing-brightgreen.svg)](tests/)
-[![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen.svg)](htmlcov/index.html)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](tests/)
 
 > *"The first open-source multimodal model you can actually train at home — 250M parameters, consumer GPU ready, with built-in meta-learning. No cloud account required."*
 
-NeuralMix is a **250M parameter multimodal neural network** (vision + text) that you can train end-to-end on a single consumer GPU with 12GB VRAM. It is the only open-source multimodal model at any parameter scale that is architected around **double-loop meta-learning** as a first-class feature, structurally implemented in the codebase (with training-loop wiring scheduled for Epic 2).
+NeuralMix is a **250M parameter multimodal neural network** (vision + text) that you can train end-to-end on a single consumer GPU with 12GB VRAM. It is the only open-source multimodal model at any parameter scale that is architected around **double-loop meta-learning** as a first-class feature, structurally implemented in the codebase (with initial trainer wiring landed while validation continues).
 
 **Why This Project Exists:** TPS for AI in Brownfield Systems
 
@@ -150,9 +149,9 @@ Every mature open-source multimodal model — LLaVA (7B), BLIP-2 (3.9B), Instruc
 
 3. Set up environment variables (see [Environment Setup](#environment-setup))
 
-4. Run the getting started notebook:
+4. Validate your setup before training:
    ```bash
-   jupyter notebook notebooks/01_getting_started.ipynb
+   python train.py --config configs/my_config.yaml --check
    ```
 
 5. Train the model:
@@ -160,6 +159,11 @@ Every mature open-source multimodal model — LLaVA (7B), BLIP-2 (3.9B), Instruc
    from src.training.trainer import Trainer
    trainer = Trainer(config_path="configs/my_config.yaml")
    trainer.train()
+   ```
+
+   For CLI usage:
+   ```bash
+   python train.py --config configs/my_config.yaml
    ```
 
 ## 📖 User Guide
@@ -171,7 +175,7 @@ For comprehensive documentation, see the **[User Guide](docs/USER_GUIDE.md)** wh
 | **Installation Guide** | Step-by-step setup with verification commands |
 | **Configuration Guide** | Hardware, model, training, and data configuration options |
 | **Hardware Detection** | Automatic GPU/NPU detection with example outputs |
-| **Training Workflow** | CLI, Python API, and Jupyter notebook training methods |
+| **Training Workflow** | CLI, Python API, and Jupyter notebook training with `--check` validation and profiling artifacts |
 | **Inference Guide** | Single and batch inference with code examples |
 | **Development Tools** | Make commands, testing, linting, and type checking |
 | **Troubleshooting** | Common issues (CUDA, memory, imports) with solutions |
@@ -183,8 +187,11 @@ The User Guide includes Mermaid diagrams for system architecture, training pipel
 
 | Document | Description |
 |----------|-------------|
+| **[Training Guide](TRAINING_GUIDE.md)** | Step-by-step instructions for training, validation, and training artifacts |
+| **[Testing Guide](tests/README.md)** | Test organization, execution, markers, fixtures, and CI guidance |
+| **[Acceptance Tests](tests/acceptance/README.md)** | ATDD acceptance tests for sprint-critical behavior |
 | **[Software Development Best Practices](Software%20development%20best%20practices.md)** | Coding standards, testing guidelines, and quality assurance practices |
-| **[PRD Assessment](docs/PRD_ASSESSMENT.md)** | Product Requirements Document with project scope and specifications |
+| **[PRD Assessment](docs/PRD_ASSESSMENT.md)** | Historical product assessment and implementation snapshot |
 | **[Product Development Requirements](Open-source%20multi-modal%20small%20neural%20network%20v1.md)** | Original product development requirements and technical specifications |
 
 ## Environment Setup
@@ -246,7 +253,7 @@ multi-modal-neural-network/
 │   ├── 01_getting_started.ipynb   # Setup and forward pass (content pending)
 │   ├── 02_training.ipynb          # Training workflow (content pending)
 │   └── 03_evaluation.ipynb        # Evaluation (content pending)
-├── tests/                         # 20 test files, 93% coverage
+├── tests/                         # Automated test suite and acceptance-gate docs
 └── docs/
     ├── ARCHITECTURE.md            # Component architecture and ADRs
     ├── ROADMAP.md                 # Version roadmap v1 → v1.5 → v2
@@ -254,16 +261,18 @@ multi-modal-neural-network/
     └── NPU_TRAINING.md            # NPU inference and edge deployment
 ```
 
-## Known Limitations (v1)
+## Current Implementation Gaps
 
-NeuralMix v1 is a research platform, not a production deployment. The following features are **structurally implemented but not yet functionally active** in the training loop:
+NeuralMix v1 is a research platform, not a production deployment. The following features have varying implementation status—some are active, some are partially landed, and some remain pending:
 
 | Feature | Status | Impact |
 |---------|--------|--------|
-| **Double-loop meta-controller** | Structurally wired; not yet called from `train_epoch()` | Controller produces no effect during training until Epic 2 is complete |
-| **BF16 AMP** | Configured in YAML; `autocast` and `GradScaler` not yet applied in training loop | Full-precision training only until Epic 1 is complete |
-| **Flash Attention 2** | Not yet implemented; standard `q @ k.T` used | Higher VRAM usage than target 11.5GB ceiling |
-| **Gradient checkpointing** | Config flag exists; `torch.utils.checkpoint` not applied | Higher activation memory until Epic 1 is complete |
+| **Double-loop meta-controller** | Initial controller-state wiring landed in trainer; adaptive-control validation pending | The trainer now carries controller inputs through the implemented path, but convergence and benchmark validation are still pending |
+| **BF16 AMP** | AMP enabled in trainer; long-run hardware validation pending | Mixed precision is active, but extended consumer-GPU evidence is still required |
+| **Flash Attention 2 path** | Vision and text attention now use SDPA; fusion cross-attention and RTX 3060 validation pending | Partial memory optimization is active, but end-to-end validation is still incomplete |
+| **Gradient checkpointing** | Config flag exists; checkpoint calls not yet applied | Activation memory remains higher than the target path until Story 1.2 lands |
+| **Tokenizer bootstrap** | `bert-base-uncased` bootstrap active with fallback enabled | Text pipeline startup is safer, but end-to-end dataset validation is still needed |
+| **Startup validation UX** | `--check` mode implemented; startup banner and feature-status logging pending | Preflight validation is available, but first-run UX is still incomplete |
 | **Wolfram Alpha training integration** | Compiles and runs; not wired into training loss | Deferred to v1.5 |
 | **Evaluation module** | `src/evaluation/` is empty | No benchmark results until Epic 4 is complete |
 | **Jupyter notebook content** | Shell files exist; content not yet built | No interactive tutorials until Epic 5 |
@@ -272,22 +281,23 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full implementation status 
 
 ## Implementation Status
 
-NeuralMix is a **brownfield project** midway through its 9-phase development plan. Phases 1–5 are structurally complete; Phases 6–9 are in progress.
+NeuralMix is a **brownfield project** in active development across its 9-phase plan. Core architecture (Phases 1–4) is complete; optimization and training enhancement work (Phases 5–9) is underway.
 
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1 | Environment setup, base architecture, tests | ✅ Complete |
 | 2 | Vision encoder, text encoder, fusion layer | ✅ Complete |
 | 3 | Double-loop controller (structural) | ✅ Structural complete |
-| 3b | Double-loop wired to training loop | 🔲 Epic 2 |
+| 3b | Double-loop wired to training loop | 🟨 Initial integration landed; broader validation pending |
 | 4 | Wolfram Alpha integration (structural) | ✅ Structural complete |
 | 4b | Wolfram wired to training loss | ⏭️ v1.5 scope |
-| 5 | BF16 AMP (configured) | ⚠️ Configured, not applied |
-| 5b | Flash Attention 2 | 🔲 Epic 1 |
-| 5c | Gradient checkpointing (flag exists) | ⚠️ Flag exists, not applied |
+| 5 | BF16 AMP | ✅ Active in trainer |
+| 5b | Flash Attention 2 path | ✅ Initial SDPA implementation landed in vision/text encoders |
+| 5c | Gradient checkpointing | ⚠️ Flag exists, checkpoint calls still pending |
+| 5d | BERT tokenizer bootstrap | ✅ Active with fallback behavior |
 | 6 | Full training run | 🔲 Epic 3 |
 | 7 | Evaluation / benchmarks | 🔲 Epic 4 |
-| 8 | Documentation + tutorials | 🔲 Epic 5 |
+| 8 | Documentation + tutorials | 🟨 In progress |
 | 9 | Public release | 🔲 Epic 6 |
 
 ## Architecture Overview
@@ -799,3 +809,11 @@ If you use this code in your research, please cite:
 - Wolfram Alpha for symbolic computation (optional auxiliary supervision)
 - Community contributors
 - Architecture inspired by the edge IoT deployment challenge: training where the model needs to live
+
+
+
+
+
+
+
+

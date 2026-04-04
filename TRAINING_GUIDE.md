@@ -61,7 +61,13 @@ cp configs/default.yaml configs/my_config.yaml
 
 ### 3. Training
 
-Start training with:
+Validate your setup before training:
+
+```bash
+python train.py --config configs/default.yaml --check
+```
+
+Then start training with:
 
 ```bash
 python train.py --config configs/default.yaml
@@ -71,11 +77,14 @@ Options:
 - `--config`: Path to configuration file (default: `configs/default.yaml`)
 - `--resume`: Path to checkpoint to resume training
 - `--device`: Device to use (`cuda` or `cpu`)
+- `--check`: Validate config/model/data without running full training
 
 Example with custom config:
 ```bash
 python train.py --config configs/my_config.yaml --device cuda
 ```
+
+Profiling metrics including peak GPU memory usage, average step time, and training command are automatically saved as JSON files per epoch in the `output_dir/profiling/` directory.
 
 ### 4. Inference
 
@@ -883,3 +892,4 @@ If you use this code, please cite:
   license = {Apache-2.0}
 }
 ```
+

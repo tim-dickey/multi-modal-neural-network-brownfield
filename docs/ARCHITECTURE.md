@@ -188,7 +188,7 @@ Inputs (every N steps, where N=update_frequency):
 
 **Outer loop (meta-learning):** LSTM controller processes training history every `update_frequency` steps (default 100), outputs `lr_scale` → scales optimizer LR via `AdaptiveLRController`.
 
-**⚠️ Current gap:** `train_epoch()` does not pass `current_loss`, `current_accuracy`, or `gradient_norm` to the model forward pass. The controller is structurally wired but produces no effect during training. Fix required in Epic 2, Story 2.1.
+**⚠️ Current gap:** Initial controller-state and meta-loss plumbing is now present in `train_epoch()`, but adaptive-control effectiveness, convergence impact, and benchmark validation are still pending. The remaining Epic 2 work is to validate that the controller materially improves training rather than merely flowing through the loop.
 
 ---
 
@@ -249,42 +249,70 @@ flowchart TD
     TCF --> ALC["create_adaptive_lr_controller()"]
 ```
 
-### 3.2 Target Training Loop (Phase 6)
+### 3.2 Integrated Training Loop with Meta-Learning (Phase 6)
+
+**Note:** This loop reflects the implemented training path validated by the April 4, 2026 acceptance gate and serves as the baseline for downstream optimization work.
 
 ```python
 for epoch in range(max_epochs):
+    controller_state = {
+        "prev_loss": torch.tensor(0.0, device=device),
+        "prev_accuracy": torch.tensor(0.0, device=device),
+        "prev_grad_norm": torch.tensor(0.0, device=device),
+    }
+
     for batch in train_loader:
-        optimizer.zero_grad()
+        optimizer.zero_grad(set_to_none=True)
+        batch = normalize_batch(batch)
 
-        with torch.amp.autocast(device_type='cuda', dtype=torch.bfloat16):
-            outputs = model(
-                images=batch['images'],
-                input_ids=batch['input_ids'],
-                attention_mask=batch['attention_mask'],
-                current_loss=prev_loss,
-                current_accuracy=prev_accuracy,
-                gradient_norm=prev_grad_norm,
-            )
-            logits = outputs['logits']
-            task_loss = criterion(logits, batch['labels'])
-            meta_info = outputs.get('meta_info')
-            total_loss = meta_criterion(task_loss, meta_info)
+        if use_amp:
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16):
+                outputs = model(
+                    images=batch["images"],
+                    input_ids=batch["input_ids"],
+                    attention_mask=batch["attention_mask"],
+                    current_loss=controller_state["prev_loss"],
+                    current_accuracy=controller_state["prev_accuracy"],
+                    gradient_norm=controller_state["prev_grad_norm"],
+                )
+                logits = outputs["logits"]
+                task_loss = criterion(logits, batch["labels"])
+        else:
+            outputs = model(...)
+            logits = outputs["logits"]
+            task_loss = criterion(logits, batch["labels"])
 
-        scaler.scale(total_loss).backward()
-        scaler.unscale_(optimizer)
-        grad_norm = grad_clipper(model.parameters())
-        scaler.step(optimizer)
-        scaler.update()
+        meta_info = outputs.get("meta_info")
+        total_loss = meta_criterion(task_loss, meta_info) if meta_info else task_loss
 
-        if meta_info and adaptive_lr:
-            adaptive_lr.update_lr(optimizer, meta_info['lr_scale'])
+        if use_amp and scaler is not None:
+            scaler.scale(total_loss).backward()
+            scaler.unscale_(optimizer)
+        else:
+            total_loss.backward()
 
-        prev_loss = task_loss.detach()
-        prev_accuracy = (logits.argmax(-1) == batch['labels']).float().mean().detach()
-        prev_grad_norm = torch.tensor(grad_norm)
+        grad_norm = clip_grad_norm_(model.parameters(), gradient_clip)
+
+        if use_amp and scaler is not None:
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            optimizer.step()
+
+        if meta_info and adaptive_lr and "lr_scale" in meta_info:
+            adaptive_lr.update_lr(optimizer, meta_info["lr_scale"])
+
+        controller_state = {
+            "prev_loss": task_loss.detach().float(),
+            "prev_accuracy": (logits.argmax(-1) == batch["labels"]).float().mean().detach(),
+            "prev_grad_norm": torch.tensor(float(grad_norm), device=device),
+        }
 
     scheduler.step()
+    write_epoch_profile_json(output_dir / "profiling")
 ```
+
+The current implementation also writes per-epoch profiling artifacts containing peak VRAM, average step time, and the executed training command.
 
 ### 3.3 Memory Budget (12GB VRAM target)
 
@@ -547,21 +575,23 @@ hardware:
 | 1 | Environment setup, base architecture, tests | ✅ Complete |
 | 2 | Vision encoder, text encoder, fusion layer | ✅ Complete |
 | 3 | Double-loop controller (structural) | ✅ Structural complete |
-| 3b | Double-loop wired to training loop | 🔲 Epic 2 |
+| 3b | Double-loop wired to training loop | 🟨 Initial integration landed; broader validation pending |
 | 4 | Wolfram Alpha integration (structural) | ✅ Structural complete |
 | 4b | Wolfram wired to training loss | ⏭️ v1.5 scope |
-| 5 | BF16 AMP (configured) | ⚠️ Configured, not applied in `train_epoch()` |
-| 5b | Flash Attention 2 | 🔲 Epic 1 |
-| 5c | Gradient checkpointing (flag exists) | ⚠️ Flag exists, `torch.utils.checkpoint` not applied |
+| 5 | BF16 AMP | ✅ Active in `train_step()` / `train_epoch()` |
+| 5b | Flash Attention 2 path | ✅ Initial SDPA implementation landed in vision/text encoders |
+| 5c | Gradient checkpointing | ⚠️ Flag exists; encoder checkpoint calls still pending |
+| 5d | BERT tokenizer bootstrap | ✅ Active with fallback behavior |
 | 6 | Full training run | 🔲 Epic 3 |
 | 7 | Evaluation / benchmarks | 🔲 Epic 4 (`src/evaluation/` is empty) |
-| 8 | Documentation + tutorials | 🔲 Epic 5 |
+| 8 | Documentation + tutorials | 🟨 In progress |
 | 9 | Public release | 🔲 Epic 6 |
 
-### Phase 6 Blockers (must resolve before first training run)
+### Remaining Phase 6 Follow-ups
 
-1. **Apply BF16 AMP** — wrap forward pass in `torch.amp.autocast`; wrap backward with `scaler` (Epic 1, Story 1.1)
-2. **Apply gradient checkpointing** — apply `torch.utils.checkpoint.checkpoint` in encoder `forward()` methods (Epic 1, Story 1.2)
-3. **Implement Flash Attention 2** — replace `q @ k.T` with `F.scaled_dot_product_attention` in `MultiHeadAttention` and `TextMultiHeadAttention` (Epic 1, Story 1.3)
-4. **Wire double-loop to `train_epoch()`** — pass `prev_loss`, `prev_accuracy`, `prev_grad_norm` to model forward; call `adaptive_lr.update_lr()` (Epic 2, Story 2.1)
-5. **Replace `SimpleTokenizer`** — use `AutoTokenizer.from_pretrained("bert-base-uncased")` before accuracy benchmarking (Epic 1, Story 1.4)
+1. **Apply gradient checkpointing** — wire `torch.utils.checkpoint` into the encoder forward paths to complete the intended memory-reduction stack.
+2. **Validate the full consumer-GPU run empirically** — collect end-to-end RTX 3060 VRAM / throughput evidence beyond the current acceptance gate.
+3. **Decide whether fusion cross-attention should also move to SDPA** — vision/text attention now use SDPA, but the fusion path still uses manual attention.
+
+
+

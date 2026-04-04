@@ -16,7 +16,7 @@ Mode: RED gate (must fail until features are implemented)
 ## Gate Command
 
 ```bash
-python -m pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance and tdd_red" -q
+pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance and tdd_red" -q
 ```
 
 ## Freeze Policy
@@ -24,3 +24,11 @@ python -m pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance a
 - No feature implementation starts until this gate is acknowledged.
 - New acceptance criteria must be added only by appending tests to the acceptance gate file.
 - Existing acceptance tests in this set must not be removed; they may only be tightened.
+
+## Outcome
+
+Status: GREEN — gate released
+Date: 2026-04-04
+Completion Branch: docs/project-context-2026-03-28
+Command: `pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance and tdd_red" -q`
+Result: 14 passed, 0 failed

@@ -164,3 +164,163 @@ GitHub showed "Can't automatically merge" on PR #8. Root cause: PR #6 (`chore/bm
 2. **`add/add` conflicts** arise when two branches independently add the same file — git cannot auto-merge even if content is identical
 3. **Stash before merge** when untracked files overlap with incoming branch content
 4. **Audit before merge** — the 17-issue audit prevented introducing runtime failures on Windows (`/tmp/` paths) and broken YAML templating (`{ { } }` spacing)
+
+---
+
+## Addendum — Sessions Previously Not Captured
+
+### Scope of This Addendum
+This addendum captures the major repository sessions that occurred after the original 2026-03-02 summary and were not yet reflected in this document. It covers the planning/documentation wave on 2026-03-02 through 2026-03-03, the BMAD/project-context sync work on 2026-03-28, the community documentation updates on 2026-04-04, and the sprint-thread TDD-first implementation session completed on 2026-04-04.
+
+---
+
+## Phase 7: NeuralMix Planning Artifact Expansion (2026-03-02 to 2026-03-03)
+
+### What Happened
+After PR #8 and the follow-on TEA work, the project moved into a concentrated planning and documentation phase for NeuralMix v1.
+
+### Artifacts Added or Updated
+- `docs: add NeuralMix next-steps analysis and pre-work checklist (2026-03-02)`
+- `docs: record Tim_D approval and solo-project status; unblock Winston and Bob`
+- `docs: add NeuralMix codebase review and architecture document (2026-03-03)`
+- `docs: add UX assessment for NeuralMix v1 (Sally, 2026-03-03)`
+- `docs: add implementation readiness report and epics/stories for NeuralMix v1`
+- `docs: add clean consolidated PRD for contributor/co-author CTA`
+- `docs: update README and docs with NeuralMix branding, architecture, and roadmap`
+
+### Review / Correction Sessions
+Several BMAD- and Copilot-assisted review passes followed immediately after the initial documents were created:
+- PR review feedback clarified TDD RED-phase rules and fixed brittle selectors
+- codebase review and architecture artifacts received follow-up corrections
+- epics and implementation-readiness artifacts received two rounds of reviewer suggestions
+- README / roadmap / branding documentation received accuracy corrections for implementation status, GPU SKUs, arXiv wording, and Docker scope
+
+### Result
+By the end of 2026-03-03, the repository had a coherent planning baseline for NeuralMix v1:
+- next steps and pre-work sequencing
+- architecture and codebase review
+- UX assessment
+- implementation-readiness analysis
+- epics and stories
+- consolidated PRD and refreshed external-facing project docs
+
+---
+
+## Phase 8: BMAD Sync, README Refinement, and Project Context (2026-03-07 to 2026-03-28)
+
+### What Happened
+The next set of sessions focused on repository hygiene and agent-facing context rather than core feature work.
+
+### Main Changes
+- README rationale and project philosophy were expanded and reformatted across two 2026-03-07 commits
+- Dependabot updates for `black` and `flake8` were merged
+- latest BMAD artifacts were synced on 2026-03-28
+- a dedicated agent/project context document was added on branch `docs/project-context-2026-03-28`
+
+### Outcome
+This phase improved the non-code operating context of the repository:
+- better contributor and reader framing in the README
+- cleaner BMAD synchronization with the repo state
+- a clearer project-context layer for AI agents and future automated sessions
+
+---
+
+## Phase 9: Repository Community / Governance Documentation (2026-04-04)
+
+### What Happened
+On 2026-04-04, the repository received a lightweight but important collaboration pass:
+- code of conduct added
+- security policy added
+- issue templates added
+- pull request templates added
+
+### Result
+The repository became more contributor-ready, with baseline community and intake documentation now present before broader collaboration or public-facing contribution workflows scale up.
+
+---
+
+## Phase 10: Sprint Thread TDD-First Implementation Session (2026-04-04)
+
+### Objective
+Move from planning into implementation for the first GPU-readiness / training-path sprint while preserving a strict TDD-first workflow.
+
+### Working Mode
+The session used BMAD Party Mode with PM, Architect, Scrum Master, QA, and Test Architect participation at different points. The flow intentionally moved through:
+1. sprint-goal definition
+2. backlog narrowing
+3. RED acceptance gate creation
+4. GREEN implementation against the frozen acceptance lane
+
+### Key Planning Output
+A live working session produced:
+- an exact sprint goal focused on consumer-GPU training readiness and first-epoch viability
+- a top-10 backlog aligned to the existing PRD / architecture / roadmap artifacts
+
+### TDD / Test Architecture Work Completed
+Before implementation began, the session established a frozen acceptance gate:
+- added acceptance-lane markers in `pytest.ini`
+- documented the RED/GREEN workflow in `tests/README.md`
+- created `tests/acceptance/README.md`
+- created `tests/acceptance/ATDD_GATE_FREEZE.md`
+- expanded `tests/acceptance/test_sprint_thread_tdd_red.py` to cover P1-P10 expectations
+
+The acceptance gate covered the sprint thread for:
+- unified train loop behavior
+- bf16 AMP activation
+- SDPA / flash-attention path expectations
+- tokenizer bootstrap behavior
+- `--check` mode / dry-run validation
+- profiling artifact generation
+- data collate key consistency
+- first-epoch integration expectations
+- double-loop controller input wiring
+- adaptive/meta output influence on training
+
+### Implementation Work Completed
+The GREEN pass implemented or stabilized the following:
+- trainer epoch / step integration in `src/training/trainer.py`
+- bf16 autocast and meta-loss compatibility behavior in `src/training/trainer.py`
+- controller-state wiring for previous loss / accuracy / grad norm in `src/training/trainer.py`
+- profiling output generation in `src/training/trainer.py`
+- tokenizer bootstrap to `bert-base-uncased` with fallback behavior in `src/data/dataset.py`
+- collate-key consistency (`image` / `label` to `images` / `labels`) reflected in code and tests
+- scaled dot-product attention path in both `src/models/vision_encoder.py` and `src/models/text_encoder.py`
+- training entrypoint support for `--check` / validation mode in `train.py`
+
+### Environment / Validation Work Completed
+The implementation session also handled environment validation directly:
+- configured the repository Python virtual environment
+- installed the missing runtime/test dependencies needed to execute the acceptance lane (`torch`, `torchvision`, `pytest`, `transformers`)
+- resolved several patch-induced syntax / formatting artifacts introduced during iterative trainer edits
+- reran compile validation across the modified Python modules
+
+### Final Verification
+The frozen acceptance lane was executed successfully at the end of the session:
+- `tests/acceptance/test_sprint_thread_tdd_red.py`
+- result: **14 passed, 0 failed**
+
+### Final Commit / Push
+The implementation session concluded with:
+- commit `dff9bf1` — `Implement sprint training path and freeze acceptance gate`
+- push to `origin/docs/project-context-2026-03-28`
+- clean working tree after push
+
+---
+
+## Additional Decisions Made After the Original Summary
+
+| Decision | Rationale |
+|----------|-----------|
+| Freeze acceptance tests before feature work | Prevent scope drift and preserve a real RED-to-GREEN workflow |
+| Treat acceptance lane as the authoritative implementation contract | Ensures BMAD planning artifacts translate into executable validation |
+| Keep trainer/data/model fixes minimal and sprint-scoped | Avoids broad refactors while closing the highest-value training-path gaps |
+| Push implementation on the active docs/project-context branch | Preserved continuity with the branch already carrying BMAD context work and active PR #37 |
+
+---
+
+## Additional Lessons Learned
+
+1. **Planning sessions need explicit carry-forward into session summaries** — otherwise important architecture, readiness, and UX decisions become fragmented across many docs and commits.
+2. **A frozen acceptance lane works well for BMAD story execution** — it created a reliable contract for moving from RED to GREEN without hand-waving.
+3. **Patch-heavy trainer edits benefit from immediate compile checks** — most time lost in the implementation session came from formatting and syntax artifacts, not from the underlying logic.
+4. **Repository context branches can accumulate mixed documentation + implementation work** — summaries should record the actual active branch used for the final commit and push, not just the originally planned branch.

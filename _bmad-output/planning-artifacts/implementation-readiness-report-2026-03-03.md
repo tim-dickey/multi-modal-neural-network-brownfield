@@ -459,3 +459,29 @@ The project is architecturally sound and strategically coherent. The codebase is
 
 *Prepared by John (📋 Product Manager, BMAD Method v6.0.3) | 2026-03-03*
 *Assessed for Tim_D | multi-modal-neural-network-brownfield (NeuralMix)*
+
+---
+
+## 2026-04-04 Update Addendum
+
+This report remains useful as a readiness snapshot, but several April 4 sprint-thread items have now moved forward.
+
+### Items Now Implemented
+
+- `train.py --check` dry-run validation mode is implemented.
+- Trainer BF16 AMP wiring is active in `src/training/trainer.py`.
+- Trainer controller input/output wiring is active for the current training path.
+- Dataset bootstrap now defaults to `bert-base-uncased` with fallback behavior.
+- Vision and text encoder attention paths now use PyTorch SDPA.
+- The sprint acceptance gate completed green: **14 passed, 0 failed**.
+
+### Items Still Open
+
+- Gradient checkpointing is still configured but not yet applied in encoder forward passes.
+- Fusion cross-attention still uses the manual attention path.
+- End-to-end consumer GPU validation and benchmark evidence are still pending.
+
+### How To Read This Report Now
+
+- Treat the original blocker analysis as a historical assessment of the 2026-03-03 repository state.
+- For current implementation status, prefer the updated `README.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, and the acceptance gate docs under `tests/acceptance/`.

@@ -34,6 +34,7 @@ Key findings:
 Custom Vision Transformer (ViT) with:
 - `PatchEmbedding`: Conv2d-based patch projection (correct — equivalent to standard ViT)
 - `MultiHeadAttention`: Manual QKV implementation with standard scaled dot-product
+- **Update note (2026-04-04):** vision and text encoder attention paths have since been migrated to PyTorch SDPA; fusion-layer cross-attention remains on the manual path.
 - `TransformerBlock`: Pre-norm (LayerNorm before attention/MLP) — correct modern style
 - `VisionEncoder`: 12-layer default, CLS token, learnable position embeddings, truncated-normal weight init
 - `create_vision_encoder()`: Clean factory function
@@ -321,3 +322,4 @@ Test files cover all major modules. Notable components include:
 ---
 
 *Prepared by Winston (🏗️ Architect, BMAD Method v6.0.3) | 2026-03-03*
+

@@ -74,12 +74,14 @@ NeuralMix follows a deliberate three-stage progression aligned to the edge IoT d
 
 | Epic | Goal | Status |
 |------|------|--------|
-| Epic 1 | Achieve Consumer GPU Training Target (AMP, Flash Attention 2, gradient checkpointing) | 🔲 Pending |
-| Epic 2 | Activate and Validate Meta-Learning Training Loop | 🔲 Pending |
+| Epic 1 | Achieve Consumer GPU Training Target (AMP, Flash Attention 2, gradient checkpointing) | 🟨 In progress — AMP, Flash Attention 2 path, tokenizer bootstrap, and `--check` landed; gradient checkpointing and startup UX remain |
+| Epic 2 | Activate and Validate Meta-Learning Training Loop | 🟨 In progress — controller inputs/outputs wired in trainer; broader validation pending |
 | Epic 3 | Execute Full Training Run and Produce Results | 🔲 Pending |
 | Epic 4 | Produce Research Benchmark Results and Ablation Study | 🔲 Pending |
-| Epic 5 | Build Developer Onboarding and Documentation | 🔲 Pending |
+| Epic 5 | Build Developer Onboarding and Documentation | 🟨 In progress |
 | Epic 6 | Public Release and Community Launch | 🔲 Pending |
+
+As of 2026-04-04, the first sprint acceptance gate for the training-path slice is green (14/14).
 
 ---
 
@@ -105,7 +107,7 @@ NeuralMix follows a deliberate three-stage progression aligned to the edge IoT d
 - **HuggingFace-compatible interface** — `from_pretrained()` / `push_to_hub()` pattern
 - **DDP support** — multi-GPU training via `torch.nn.parallel.DistributedDataParallel` for users with multiple GPUs
 - **WebDataset streaming pipeline** — efficient large-scale training beyond 1M samples
-- **Startup UX improvements** — startup banner with device/VRAM/config info; feature-status logging; `--check` dry-run mode
+- **Startup UX improvements** — startup banner with device/VRAM/config info and feature-status logging (`--check` already landed in v1)
 
 ### v1.5 Success Criteria
 
@@ -186,3 +188,4 @@ NeuralMix follows a deliberate three-stage progression aligned to the edge IoT d
 | Wolfram Alpha API tier | **Free tier** (2,000 req/day) | Sufficient for v1 experimental use with SQLite caching planned for v1.5 |
 | Wolfram wiring scope | **v1.5** | Core v1 research claim is double-loop meta-learning; Wolfram is an enhancement, not the primary contribution |
 | v1.5 advancement trigger | **Milestone-based** | Advances when: paper submitted + 10+ community contributors + stable training on 3+ GPU models |
+
