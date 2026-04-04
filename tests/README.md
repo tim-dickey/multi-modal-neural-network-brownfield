@@ -138,7 +138,7 @@ Tests are organized with pytest markers:
 - `@pytest.mark.data` - Data pipeline tests
 - `@pytest.mark.training` - Training utility tests
 - `@pytest.mark.acceptance` - Sprint acceptance-gate tests
-- `@pytest.mark.tdd_red` - RED-phase ATDD tests
+- `@pytest.mark.tdd_red` - Acceptance tests originally written in the RED phase of ATDD/TDD and now expected to pass in the green acceptance gate
 
 ## Available Fixtures
 

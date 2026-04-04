@@ -309,8 +309,12 @@ for epoch in range(max_epochs):
         }
 
     scheduler.step()
-    write_epoch_profile_json(output_dir / "profiling")
+    # Trainer.train_epoch() writes:
+    # output_dir/profiling/epoch_{epoch:04d}_profile.json
+    # containing peak_vram_gb, avg_step_time_ms, and run_command
 ```
+
+> **Note:** The snippet above is illustrative pseudocode. In the real implementation, profiling is written directly inside `Trainer.train_epoch()` to `self.output_dir/profiling/epoch_{epoch:04d}_profile.json`; there is no separate `write_epoch_profile_json` helper.
 
 The current implementation also writes per-epoch profiling artifacts containing peak VRAM, average step time, and the executed training command.
 

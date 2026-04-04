@@ -546,7 +546,7 @@ model: ok
 data: ok
 ```
 
-For real training runs, see logs in `output_dir/logs/`, checkpoints in `output_dir/checkpoints/`, and profiling artifacts in `output_dir/profiling/epoch_XXXX_profile.json`.
+For real training runs, see logs in the configured `paths.log_dir` location (default: `./logs`), checkpoints in the configured `paths.checkpoint_dir` location (default: `./checkpoints`), and profiling artifacts in `output_dir/profiling/epoch_XXXX_profile.json`.
 
 ### Method 2: Python Script Training
 
@@ -597,7 +597,7 @@ output_dir/
 │   ├── epoch_001.safetensors    # Epoch-specific checkpoints
 │   └── ...
 └── profiling/
-    └── epoch_0001_profile.json  # Peak VRAM, average step time, command
+    └── epoch_0000_profile.json  # Peak VRAM, average step time, command
 ```
 
 ### Monitoring Training Progress
@@ -1112,8 +1112,6 @@ Epoch [10/50] ████████████████████░░
 ---
 
 **Document Version:** 1.0  
-**Last Updated:** November 2025  
+**Last Updated:** April 2026  
 **License:** Apache 2.0
-
-
 

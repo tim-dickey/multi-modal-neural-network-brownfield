@@ -4,7 +4,7 @@ This file freezes the pre-implementation ATDD gate file set for the sprint threa
 
 Date: 2026-04-04
 Branch: docs/bmad-planning-artifacts-2026-03-03
-Mode: RED gate (must fail until features are implemented)
+Mode: RED gate (originally written to fail until features are implemented; now frozen as a GREEN regression gate following the April 4 sprint completion)
 
 ## Frozen Gate Files
 
