@@ -203,10 +203,10 @@ class TestMultiModalDataset:
         batch = [dataset[i] for i in range(2)]
         collated = dataset.collate_fn(batch)
 
-        assert collated["image"].shape[0] == 2
+        assert collated["images"].shape[0] == 2
         assert collated["input_ids"].shape[0] == 2
         assert collated["attention_mask"].shape[0] == 2
-        assert len(collated["label"]) == 2
+        assert len(collated["labels"]) == 2
 
 
 class TestCOCOCaptionsDataset:
@@ -680,3 +680,4 @@ class TestMultiModalDatasetWithTokenizer:
         item = dataset[0]
         assert "input_ids" in item
         assert "attention_mask" in item
+

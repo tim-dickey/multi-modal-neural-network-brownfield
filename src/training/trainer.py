@@ -1,6 +1,9 @@
 """Main training loop for multi-modal neural network."""
 
+import json
 import logging
+import sys
+import time
 from collections.abc import Sized
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, cast
@@ -21,6 +24,9 @@ from .training_state import LoggingManager, TrainingComponentsFactory, TrainingS
 
 
 class Trainer:
+    _controller_state: Dict[str, torch.Tensor]
+    _last_meta_info: Optional[Dict[str, Any]]
+
     """Main trainer class for multi-modal neural network.
 
     Supports two construction modes:
@@ -88,6 +94,9 @@ class Trainer:
         # Training components: losses, optimizer, scheduler, clipper, adapters
         self._init_training_components()
 
+        # Controller/meta state placeholders initialized in __init__ for static analysis.
+        self._controller_state: Dict[str, torch.Tensor] = {}
+        self._last_meta_info: Optional[Dict[str, Any]] = None
         # Initialize checkpoint manager
         self.checkpoint_manager = CheckpointManager(
             checkpoint_dir=self.checkpoint_dir,
@@ -313,60 +322,102 @@ class Trainer:
             self.wandb_logger.finish()
 
     def train_epoch(self, epoch: int) -> Dict[str, float]:
-        """Train for one epoch."""
+        """Train for one epoch using the unified train_step path."""
         self.model.train()
         total_loss = 0.0
-        total_correct = 0
+        total_correct = 0.0
         total_samples = 0
+        step_times_ms = []
 
         # Guard: empty data loader
         if not hasattr(self, "train_loader") or self.train_loader is None:
             raise ValueError("Trainer.train_loader is not initialized.")
+
         if len(self.train_loader) == 0:
             raise ValueError(
-                "Training data loader is empty. Check your config:\n"
+                "Training data loader is empty. Check your config.\n"
                 "  - data.train_path exists and has files\n"
                 "  - data.batch_size > 0\n"
                 "  - dataset split is not empty\n"
             )
+        self._controller_state = {
+            "prev_loss": torch.tensor(0.0, device=self.device),
+            "prev_accuracy": torch.tensor(0.0, device=self.device),
+            "prev_grad_norm": torch.tensor(0.0, device=self.device),
+        }
+
+        if hasattr(self, "adaptive_lr") and self.adaptive_lr is not None:
+            base_lr = float(getattr(self.adaptive_lr, "base_lr", 0.0))
+            if base_lr > 0:
+                for param_group in self.optimizer.param_groups:
+                    param_group["lr"] = base_lr
+
+        if getattr(self.device, "type", "cpu") == "cuda":
+            torch.cuda.reset_peak_memory_stats(self.device)
 
         for batch_idx, batch in enumerate(self.train_loader):
-            # Move batch to device
+            start_time = time.perf_counter()
+
             batch = {
                 k: (v.to(self.device) if isinstance(v, torch.Tensor) else v)
                 for k, v in batch.items()
             }
             batch = self._normalize_batch(batch)
 
-            self.optimizer.zero_grad()
+            self.optimizer.zero_grad(set_to_none=True)
+            loss, accuracy = self.train_step(batch)
 
-            # Forward pass
-            outputs = self.model(
-                images=batch.get("images"),
-                input_ids=batch.get("input_ids"),
-                attention_mask=batch.get("attention_mask"),
-            )
-            logits = outputs["logits"]
-            loss = self.criterion(logits, batch["labels"])
+            if self.use_amp and self.scaler is not None:
+                self.scaler.scale(loss).backward()
+                self.scaler.unscale_(self.optimizer)
+            else:
+                loss.backward()
 
-            loss.backward()
-
-            # Optional gradient clipping
             clip_val = self.config.get("training", {}).get(
                 "gradient_clip", TRAINING.gradient_clip
             )
+            grad_norm_value = 0.0
             if clip_val and clip_val > 0:
-                torch.nn.utils.clip_grad_norm_(self.model.parameters(), clip_val)
+                grad_norm_value = float(
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), clip_val).item()
+                )
 
-            self.optimizer.step()
+            if self.use_amp and self.scaler is not None:
+                self.scaler.step(self.optimizer)
+                self.scaler.update()
+            else:
+                self.optimizer.step()
 
-            # Metrics
+            meta_info = getattr(self, "_last_meta_info", None)
+            if (
+                hasattr(self, "adaptive_lr")
+                and self.adaptive_lr is not None
+                and isinstance(meta_info, dict)
+                and "lr_scale" in meta_info
+            ):
+                self.adaptive_lr.update_lr(self.optimizer, meta_info["lr_scale"])
+
+            if self.scheduler is not None and self.scheduler_update_freq == "step":
+                self.scheduler.step()
+
+            self.global_step += 1
+
+            self._controller_state = {
+                "prev_loss": loss.detach().float(),
+                "prev_accuracy": accuracy.detach().float(),
+                "prev_grad_norm": torch.tensor(
+                    grad_norm_value,
+                    device=self.device,
+                    dtype=torch.float32,
+                ),
+            }
+
+            batch_size = int(batch["labels"].size(0)) if "labels" in batch else 0
             total_loss += float(loss.item())
-            preds = logits.argmax(dim=-1)
-            total_correct += int((preds == batch["labels"]).sum().item())
-            total_samples += int(batch["labels"].size(0))
+            total_correct += float(accuracy.item()) * batch_size
+            total_samples += batch_size
+            step_times_ms.append((time.perf_counter() - start_time) * 1000.0)
 
-            # Ensure a sane log interval (avoid zero or non-int config values)
             log_interval = max(
                 1,
                 int(
@@ -376,21 +427,40 @@ class Trainer:
                 ),
             )
             if (batch_idx % log_interval) == 0:
-                # Use logger formatting to keep line lengths short
                 self.logger.info(
                     "Epoch %d [%d/%d] Loss: %.4f",
                     epoch,
                     batch_idx,
                     len(self.train_loader),
-                    loss.item(),
+                    float(loss.item()),
                 )
 
-        # Safe averaging
         num_batches = max(1, len(self.train_loader))
+        peak_vram_gb = 0.0
+        if getattr(self.device, "type", "cpu") == "cuda":
+            peak_vram_gb = float(torch.cuda.max_memory_allocated(self.device)) / (1024.0**3)
+        avg_step_time_ms = float(sum(step_times_ms) / max(1, len(step_times_ms)))
+
         metrics = {
             "loss": total_loss / num_batches,
             "accuracy": (total_correct / total_samples) if total_samples > 0 else 0.0,
+            "peak_vram_gb": peak_vram_gb,
+            "avg_step_time_ms": avg_step_time_ms,
+            "oom": False,
         }
+
+        profiling_dir = self.output_dir / "profiling"
+        profiling_dir.mkdir(parents=True, exist_ok=True)
+        profile_path = profiling_dir / f"epoch_{epoch:04d}_profile.json"
+        payload = {
+            "epoch": epoch,
+            "peak_vram_gb": metrics.get("peak_vram_gb", 0.0),
+            "avg_step_time_ms": metrics.get("avg_step_time_ms", 0.0),
+            "run_command": " ".join(sys.argv),
+        }
+        with open(profile_path, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2)
+
         return metrics
 
     def _normalize_batch(self, batch: Dict[str, Any]) -> Dict[str, Any]:
@@ -406,36 +476,73 @@ class Trainer:
         return normalized
 
     def train_step(self, batch: Dict[str, Any]) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Single training step."""
+        """Single training step returning (loss, accuracy)."""
         batch = self._normalize_batch(batch)
-        # Prepare inputs
         images = batch.get("images")
         input_ids = batch.get("input_ids")
         attention_mask = batch.get("attention_mask")
         labels = batch.get("labels")
 
-        # Forward pass
-        outputs = self.model(
-            images=images, input_ids=input_ids, attention_mask=attention_mask
+        if labels is None:
+            raise ValueError("Batch is missing required 'labels' tensor.")
+
+        use_double_loop = bool(getattr(self.model, "use_double_loop", False))
+        controller_state = getattr(self, "_controller_state", {})
+        current_loss = (
+            controller_state.get("prev_loss", torch.tensor(0.0, device=self.device))
+            if use_double_loop
+            else None
+        )
+        current_accuracy = (
+            controller_state.get("prev_accuracy", torch.tensor(0.0, device=self.device))
+            if use_double_loop
+            else None
+        )
+        gradient_norm = (
+            controller_state.get("prev_grad_norm", torch.tensor(0.0, device=self.device))
+            if use_double_loop
+            else None
         )
 
-        logits = outputs["logits"]
+        def _forward_and_loss() -> Tuple[Dict[str, Any], torch.Tensor, torch.Tensor]:
+            outputs = self.model(
+                images=images,
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                current_loss=current_loss,
+                current_accuracy=current_accuracy,
+                gradient_norm=gradient_norm,
+            )
+            logits = outputs["logits"]
+            task_loss = self.criterion(logits, labels)
+            return outputs, logits, task_loss
 
-        # Compute loss
-        loss = self.criterion(logits, labels)
+        if self.use_amp:
+            with torch.autocast(
+                device_type=getattr(self.device, "type", "cpu"),
+                dtype=torch.bfloat16,
+            ):
+                outputs, logits, task_loss = _forward_and_loss()
+        else:
+            outputs, logits, task_loss = _forward_and_loss()
 
-        # Add meta-loss if using double-loop learning
+        meta_info = outputs.get("meta_info")
         if (
-            self.model.use_double_loop
-            and "meta_info" in outputs
-            and outputs["meta_info"] is not None
+            use_double_loop
+            and isinstance(meta_info, dict)
+            and self.meta_criterion is not None
         ):
-            loss = self.meta_criterion(loss, outputs["meta_info"])
+            try:
+                loss = self.meta_criterion(task_loss, meta_info)
+            except TypeError:
+                # Backward-compatible path for simple criteria that only accept task_loss.
+                loss = self.meta_criterion(task_loss)
+        else:
+            loss = task_loss
 
-        # Compute accuracy
         predictions = logits.argmax(dim=-1)
         accuracy = (predictions == labels).float().mean()
-
+        self._last_meta_info = outputs.get("meta_info")
         return loss, accuracy
 
     @torch.no_grad()
@@ -551,3 +658,19 @@ class Trainer:
         self.training_state.current_epoch = self.current_epoch
         self.training_state.global_step = self.global_step
         self.training_state.best_val_loss = self.best_val_loss
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

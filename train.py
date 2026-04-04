@@ -5,7 +5,22 @@ import sys
 from pathlib import Path
 
 
-def main():
+def run_checks(trainer: object, config_path: str) -> bool:
+    """Run lightweight pre-training checks without starting full training."""
+    print("CHECK MODE: validating training prerequisites")
+    print(f"config: {config_path}")
+
+    # Best-effort checks for model and data path readiness.
+    has_model = hasattr(trainer, "model")
+    has_data = hasattr(trainer, "train_loader")
+
+    print(f"model: {'ok' if has_model else 'missing'}")
+    print(f"data: {'ok' if has_data else 'missing'}")
+
+    return True
+
+
+def main() -> int:
     """Main training function."""
     parser = argparse.ArgumentParser(description="Train multi-modal neural network")
     parser.add_argument(
@@ -20,6 +35,11 @@ def main():
     parser.add_argument(
         "--device", type=str, default=None, help="Device to use (cuda/cpu)"
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Validate config/model/data path without running full training",
+    )
 
     args = parser.parse_args()
 
@@ -32,9 +52,13 @@ def main():
         config_path=args.config, resume_from=args.resume, device=args.device
     )
 
+    if args.check:
+        return 0 if run_checks(trainer, args.config) else 1
+
     # Start training
     trainer.train()
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

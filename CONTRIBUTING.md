@@ -2,6 +2,14 @@
 
 Thanks for contributing! A few guidelines to help keep CI and analysis working smoothly.
 
+## Community Standards
+
+- Code of Conduct: see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security reporting: see [.github/SECURITY.md](.github/SECURITY.md)
+- Issue templates: use the templates under [.github/ISSUE_TEMPLATE](.github/ISSUE_TEMPLATE)
+- Pull requests: the default PR checklist is in [.github/pull_request_template.md](.github/pull_request_template.md)
+- AI agent context and implementation rules: see [docs/project-context.md](docs/project-context.md)
+
 ### Codacy integration
 - This repository can run Codacy analysis in CI. To enable Codacy for this repository:
   1. Create a Codacy project for this repository (on codacy.com) and obtain the project token.

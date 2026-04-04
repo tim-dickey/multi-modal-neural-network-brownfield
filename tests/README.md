@@ -324,3 +324,14 @@ pytest --override-ini="batch_size=2"
 - [pytest fixtures](https://docs.pytest.org/en/latest/fixture.html)
 - [pytest markers](https://docs.pytest.org/en/latest/mark.html)
 - [Coverage.py](https://coverage.readthedocs.io/)
+
+## ATDD Red-Green Workflow (Sprint Thread)
+
+Before feature implementation, run RED-phase acceptance tests:
+
+```bash
+pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance and tdd_red"
+```
+
+Expected outcome in RED phase: failing tests that define required behavior.
+After implementation, rerun until fully green.
