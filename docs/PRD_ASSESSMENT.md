@@ -4,6 +4,7 @@
 **Assessment Date:** 2025-11-29
 **Codebase Status:** Active Development
 **Test Coverage:** 93% (483 tests passing)
+> **Historical snapshot note (2026-04-04):** This assessment captures the repository state at the time it was authored. Since then, the training-path acceptance gate introduced on 2026-04-04 has passed (14/14), `train.py --check` has landed, trainer AMP/controller wiring has been integrated, and vision/text attention now use the SDPA path. Treat exact test totals in this report as historical rather than live project metrics.
 
 ---
 
@@ -470,3 +471,4 @@ tests/
 
 *Assessment completed by automated review system*
 *Last updated: 2025-11-29*
+

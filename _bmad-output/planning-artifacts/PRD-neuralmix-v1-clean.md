@@ -315,6 +315,21 @@ This is a **brownfield project** — Phases 1–5 are complete. Contributors sho
 
 ---
 
+
+### 2026-04-04 implementation update
+
+The table above is the 2026-03-03 baseline. Since then, the following training-path work has landed:
+- BF16 AMP is active in the trainer.
+- Vision/text attention now use the SDPA path.
+- `bert-base-uncased` tokenizer bootstrap is active with fallback behavior.
+- `train.py --check` now validates configuration/model/data wiring without starting training.
+- Initial controller wiring is active in the trainer.
+
+Still pending after that sprint slice:
+- gradient checkpointing application in encoder forwards
+- fusion-layer SDPA decision / implementation
+- full consumer-GPU run and benchmark evidence
+
 ## 8. Constraints and Known Limitations
 
 ### Hard Constraints
@@ -468,3 +483,6 @@ Since Phases 1–5 are complete, do **not** submit PRs that:
 
 *Consolidated by John (📋 Product Manager, BMAD Method v6.0.3) | 2026-03-03*
 *Maintained by Tim_D | NeuralMix v1.0*
+
+
+

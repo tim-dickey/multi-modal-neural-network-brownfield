@@ -638,6 +638,9 @@ hardware:
 
 ## 9. Phase-by-Phase Implementation Status
 
+> **Update note (2026-04-04): this section is now partially outdated.** Since this architecture artifact was authored, Phase 3b moved from not wired to partially integrated in the trainer, Phase 5 AMP moved from configured-only to active, and the vision/text portions of Phase 5b now use the SDPA path. Gradient checkpointing, fusion-path attention changes, and full empirical training validation remain open.
+
+
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1 | Environment setup, base architecture, tests | ✅ Complete |
@@ -670,3 +673,5 @@ Listed in order for Phase 6 readiness:
 ---
 
 *Prepared by Winston (🏗️ Architect, BMAD Method v6.0.3) | 2026-03-03*
+
+

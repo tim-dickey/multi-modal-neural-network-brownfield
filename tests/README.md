@@ -2,7 +2,7 @@
 
 This directory contains the comprehensive test suite for the Multi-Modal Neural Network project.
 
-**Current Status:** 446 tests passing with 93% coverage
+**Current Status:** 14/14 acceptance-gate tests passing; broader test-suite guidance is documented below.
 
 ## Test Pipeline Overview
 
@@ -42,6 +42,7 @@ tests/
 ├── test_gpu_utils.py        # GPU detection and configuration tests
 ├── test_npu_utils.py        # NPU detection tests
 ├── test_safe_load.py        # Checkpoint loading tests
+├── acceptance/              # Acceptance tests and ATDD gate docs
 └── ...                      # Additional test modules
 ```
 
@@ -56,6 +57,13 @@ make test
 
 # Run tests with coverage
 make test-cov
+```
+
+### Acceptance Gate
+
+Run the sprint acceptance gate explicitly:
+```bash
+pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance and tdd_red" -q
 ```
 
 ### Shell Scripts
@@ -129,6 +137,8 @@ Tests are organized with pytest markers:
 - `@pytest.mark.model` - Model component tests
 - `@pytest.mark.data` - Data pipeline tests
 - `@pytest.mark.training` - Training utility tests
+- `@pytest.mark.acceptance` - Sprint acceptance-gate tests
+- `@pytest.mark.tdd_red` - Acceptance tests originally written in the RED phase of ATDD/TDD and now expected to pass in the green acceptance gate
 
 ## Available Fixtures
 
@@ -335,3 +345,4 @@ pytest tests/acceptance/test_sprint_thread_tdd_red.py -m "acceptance and tdd_red
 
 Expected outcome in RED phase: failing tests that define required behavior.
 After implementation, rerun until fully green.
+

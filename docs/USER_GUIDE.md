@@ -520,6 +520,9 @@ flowchart TB
 ### Method 1: Command Line Training
 
 ```powershell
+# Validate config/model/data wiring without starting training
+python train.py --config configs/default.yaml --check
+
 # Basic training with default config
 python train.py --config configs/default.yaml
 
@@ -533,38 +536,17 @@ python train.py --config configs/default.yaml --resume checkpoints/latest.safete
 python train.py --config configs/default.yaml --device cuda
 ```
 
-**Example Terminal Output:**
+Use `--check` to validate configuration, model, and data setup without starting training—ideal for debugging setup issues before committing to a full run.
+
+**Example `--check` Output:**
 ```
-================================================================================
-Multi-Modal Neural Network Training
-================================================================================
-Loading configuration from: configs/default.yaml
-Initializing model...
-  Vision Encoder: vit_small (512 dim, 12 layers)
-  Text Encoder: bert_small (512 dim, 12 layers)
-  Fusion: early (6 layers)
-  Total Parameters: 125.5M
-
-Hardware Configuration:
-  Device: cuda:0 (NVIDIA GeForce RTX 4070)
-  Mixed Precision: bf16
-  Gradient Checkpointing: enabled
-
-Training Configuration:
-  Batch Size: 32 (4 x 8 accumulation)
-  Learning Rate: 3e-4
-  Max Epochs: 50
-================================================================================
-
-Epoch 1/50:
-  [████████████████████████████████] 1000/1000 - Loss: 2.345 - LR: 3.00e-4
-  Validation Loss: 2.123 - Accuracy: 45.2%
-  Checkpoint saved: checkpoints/epoch_001.safetensors
-
-Epoch 2/50:
-  [████████████████████████████████] 1000/1000 - Loss: 1.876 - LR: 2.95e-4
-  ...
+CHECK MODE: validating training prerequisites
+config: configs/default.yaml
+model: ok
+data: ok
 ```
+
+For real training runs, see logs in the configured `paths.log_dir` location (default: `./logs`), checkpoints in the configured `paths.checkpoint_dir` location (default: `./checkpoints`), and profiling artifacts in `output_dir/profiling/epoch_XXXX_profile.json`.
 
 ### Method 2: Python Script Training
 
@@ -605,15 +587,17 @@ trainer.train()
 
 ### Training Checkpoints
 
-Checkpoints are automatically saved during training:
+Training artifacts are written under the configured output directory:
 
 ```
-checkpoints/
-├── latest.safetensors       # Most recent checkpoint
-├── best.safetensors         # Best validation loss
-├── epoch_001.safetensors    # Epoch-specific checkpoints
-├── epoch_002.safetensors
-└── ...
+output_dir/
+├── checkpoints/
+│   ├── latest.safetensors       # Most recent checkpoint
+│   ├── best.safetensors         # Best validation loss
+│   ├── epoch_001.safetensors    # Epoch-specific checkpoints
+│   └── ...
+└── profiling/
+    └── epoch_0000_profile.json  # Peak VRAM, average step time, command
 ```
 
 ### Monitoring Training Progress
@@ -626,10 +610,16 @@ Epoch [5/50] Batch [100/500]:
 
 **Log Files:**
 ```
-logs/
+output_dir/logs/
 ├── training.log             # Full training log
 ├── default_metrics.txt      # Metrics in tabular format
 └── events.out.tfevents.*    # TensorBoard events
+```
+
+**Profiling Artifacts:**
+```
+output_dir/profiling/
+└── epoch_0001_profile.json
 ```
 
 **Weights & Biases (Optional):**
@@ -809,14 +799,14 @@ pytest tests/ -k "test_model" -v
 ```
 ========================= test session starts ==========================
 platform win32 -- Python 3.11.0, pytest-7.4.0
-collected 446 items
+collected N items
 
 tests/test_config_utils.py::test_load_config PASSED               [  1%]
 tests/test_config_utils.py::test_validate_config PASSED           [  2%]
 tests/test_data.py::test_dataset_loading PASSED                   [  3%]
 ...
 
-========================= 446 passed in 45.23s =========================
+========================= N passed in Xs =========================
 ```
 
 ### Code Quality
@@ -1122,5 +1112,6 @@ Epoch [10/50] ████████████████████░░
 ---
 
 **Document Version:** 1.0  
-**Last Updated:** November 2025  
+**Last Updated:** April 2026  
 **License:** Apache 2.0
+
