@@ -29,7 +29,7 @@ dependencies = [
     "numpy>=1.24.0",
     "scipy>=1.11.0",
     "scikit-learn>=1.5.0",
-    "tqdm>=4.66.3",
+    "tqdm>=4.67.3",
     "requests>=2.32.4,<3",
 ]
 classifiers = [
